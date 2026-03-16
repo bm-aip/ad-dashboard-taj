@@ -18,21 +18,22 @@
     --green:#4ade80; --green-dim:rgba(74,222,128,0.12);
     --amber:#fbbf24; --muted:rgba(255,255,255,0.38);
     --text:rgba(255,255,255,0.88); --text-dim:rgba(255,255,255,0.55);
+    --blue:#4285f4; --blue-dim:rgba(66,133,244,0.12);
   }
   *{margin:0;padding:0;box-sizing:border-box} html{scroll-behavior:smooth}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
   /* HEADER */
-  .header{background:linear-gradient(135deg,#0d0d14,#13131f);border-bottom:1px solid var(--border);padding:36px 60px 28px;position:relative;overflow:hidden}
+  .header{background:linear-gradient(135deg,#0d0d14,#13131f);border-bottom:1px solid var(--border);padding:28px 48px 22px;position:relative;overflow:hidden}
   .header::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(201,162,39,0.12) 0%,transparent 70%);pointer-events:none}
   .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
   .header-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:4px 12px;border-radius:2px;opacity:0.8;margin-bottom:12px;display:inline-block}
-  h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#fff;line-height:1.2}
+  h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;line-height:1.2}
   h1 span{color:var(--gold)}
   .date-range-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
   .date-range-panel{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .date-input-wrap{position:relative}
-  .date-input-wrap input{background:var(--surface2);border:1px solid rgba(201,162,39,0.3);color:var(--gold-light);font-family:'DM Mono',monospace;font-size:13px;padding:8px 36px 8px 14px;border-radius:6px;cursor:pointer;min-width:220px;outline:none;transition:border-color 0.2s}
+  .date-input-wrap input{background:var(--surface2);border:1px solid rgba(201,162,39,0.3);color:var(--gold-light);font-family:'DM Mono',monospace;font-size:13px;padding:8px 36px 8px 14px;border-radius:6px;cursor:pointer;min-width:200px;outline:none;transition:border-color 0.2s}
   .date-input-wrap input:focus{border-color:var(--gold)}
   .date-input-wrap::after{content:'📅';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
   .btn-apply{background:var(--gold);color:#000;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:none;padding:9px 20px;border-radius:6px;cursor:pointer;transition:background 0.2s}
@@ -41,15 +42,6 @@
   .qr-btn{font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;transition:all 0.15s}
   .qr-btn:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
   .qr-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:600}
-  /* KPI delta badge */
-  .kpi-delta{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;margin-top:6px}
-  .kpi-delta.up{background:var(--green-dim);color:var(--green)}
-  .kpi-delta.down{background:var(--red-dim);color:var(--red)}
-  .kpi-delta.neutral{background:rgba(255,255,255,0.05);color:var(--muted)}
-  .accounts-row{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;align-items:center}
-  .account-tag{font-size:12px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);padding:5px 14px;border-radius:20px;display:flex;align-items:center;gap:6px}
-  .account-dot{width:6px;height:6px;border-radius:50%}
-  .dot-gold{background:var(--gold)} .dot-teal{background:var(--teal)}
   .period-pill{font-family:'DM Mono',monospace;font-size:11px;background:var(--gold-dim);border:1px solid rgba(201,162,39,0.25);color:var(--gold);padding:4px 12px;border-radius:20px}
 
   /* LOADING */
@@ -60,42 +52,57 @@
   .loader-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:2px}
 
   /* NAV */
-  .nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 60px;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
-  .nav a{text-decoration:none;color:var(--text-dim);font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;padding:16px 20px;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
+  .nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 48px;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
+  .nav a{text-decoration:none;color:var(--text-dim);font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;padding:14px 18px;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
   .nav a:hover{color:var(--gold);border-bottom-color:var(--gold)}
 
   /* MAIN */
-  .main{padding:40px 60px 80px;max-width:1600px;margin:0 auto}
+  .main{padding:36px 48px 80px;max-width:1600px;margin:0 auto}
 
   /* SECTION */
-  .section{margin-bottom:64px}
-  .section-header{display:flex;align-items:baseline;gap:16px;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .section{margin-bottom:56px}
+  .section-header{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border)}
   .section-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);opacity:0.7}
-  .section-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:#fff}
+  .section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:#fff}
   .section-sub{font-size:12px;color:var(--muted);margin-left:auto}
 
-  /* KPI GRID */
+  /* KPI */
   .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
   .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 18px;position:relative;overflow:hidden}
   .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
   .kpi-card.gold::before{background:linear-gradient(90deg,var(--gold),transparent)}
   .kpi-card.teal::before{background:linear-gradient(90deg,var(--teal),transparent)}
+  .kpi-card.blue::before{background:linear-gradient(90deg,var(--blue),transparent)}
   .kpi-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
   .kpi-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;line-height:1}
   .kpi-value.gold{color:var(--gold-light)}
-  .kpi-change{font-size:11px;margin-top:6px;color:var(--muted)}
+  .kpi-delta{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;margin-top:6px}
+  .kpi-delta.up{background:var(--green-dim);color:var(--green)}
+  .kpi-delta.down{background:var(--red-dim);color:var(--red)}
+  .kpi-delta.neutral{background:rgba(255,255,255,0.05);color:var(--muted)}
+  .comb-delta{font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;margin-top:4px;display:inline-block;font-family:'DM Mono',monospace}
+  .comb-delta.up{background:var(--green-dim);color:var(--green)}
+  .comb-delta.down{background:var(--red-dim);color:var(--red)}
 
-  /* GRID LAYOUTS */
+  /* PLATFORM BADGES */
+  .plt-badge{font-size:9px;letter-spacing:1px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap}
+  .meta-badge{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,162,39,0.3)}
+  .google-badge{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(66,133,244,0.3)}
+
+  /* TOGGLE */
+  .toggle-bar{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;width:fit-content;margin-bottom:24px}
+  .toggle-btn{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:7px 20px;border-radius:6px;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.2s;font-family:'DM Sans',sans-serif}
+  .toggle-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+  .toggle-btn.active.meta-active{color:var(--gold)}
+  .toggle-btn.active.google-active{color:var(--blue)}
+
+  /* LAYOUT */
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-
-  /* CARD */
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
   .card-title{font-family:'Playfair Display',serif;font-size:16px;color:#fff;margin-bottom:20px;display:flex;align-items:center;gap:8px}
   .tag{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;padding:2px 8px;border-radius:3px}
   .tag-best{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.25)}
   .tag-worst{background:var(--red-dim);color:var(--red);border:1px solid rgba(245,96,96,0.25)}
-
-  /* CHART */
   .chart-wrap{position:relative;height:260px}
 
   /* AD ROWS */
@@ -105,13 +112,13 @@
   .ad-rank{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);font-weight:500}
   .ad-rank.worst{color:var(--red)}
   .ad-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
-  .ad-account{font-size:10px;color:var(--muted);margin-top:2px}
+  .ad-account{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
   .ad-metric{text-align:right}
   .ad-metric-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
   .ad-metric-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:1px}
   .lead-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:6px}
   .lead-bar{height:100%;border-radius:2px}
-  .bar-gold{background:var(--gold)} .bar-teal{background:var(--teal)}
+  .bar-gold{background:var(--gold)} .bar-teal{background:var(--teal)} .bar-blue{background:var(--blue)}
 
   /* WoW TABLE */
   .wow-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin-bottom:28px}
@@ -142,13 +149,10 @@
   .arrow{font-size:11px;color:var(--muted);transition:all 0.15s;opacity:0;transform:translateX(-4px)}
   .camp-row:hover .arrow{opacity:1;transform:translateX(0);color:var(--gold)}
   .camp-sub{font-size:10px;color:var(--muted);margin-top:2px}
-  .acct-badge{font-size:9px;letter-spacing:1px;font-weight:600;padding:2px 6px;border-radius:3px;white-space:nowrap}
-  .gt-badge{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,162,39,0.3)}
-  .bm-badge{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(45,212,196,0.3)}
   .badge-new{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.35);padding:2px 7px;border-radius:3px;animation:pulse-new 2s ease-in-out infinite}
   @keyframes pulse-new{0%,100%{opacity:1}50%{opacity:0.55}}
 
-  /* AGE / TARGETING */
+  /* TARGETING */
   .age-grid{display:flex;flex-direction:column;gap:14px}
   .age-row-grid{display:grid;grid-template-columns:80px 1fr 80px 80px 90px;align-items:center;gap:14px}
   .age-label{font-family:'DM Mono',monospace;font-size:12px;color:var(--text)}
@@ -161,13 +165,11 @@
   .gender-pct{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold-light)}
   .gender-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
   .gender-sub{font-size:12px;color:var(--text-dim);margin-top:5px}
-
-  /* TARGETING RECOMMENDATIONS */
   .targeting-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  @media(max-width:900px){.targeting-grid{grid-template-columns:1fr}}
   .target-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
   .target-card.gt-card{border-top:2px solid var(--gold)}
   .target-card.bm-card{border-top:2px solid var(--teal)}
+  .target-card.google-card{border-top:2px solid var(--blue)}
   .target-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
   .target-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
   .target-cpl-badge{font-family:'DM Mono',monospace;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:500;white-space:nowrap}
@@ -187,15 +189,17 @@
   .p-urgent{background:rgba(245,96,96,0.15);color:var(--red)}
   .p-high{background:rgba(251,191,36,0.15);color:var(--amber)}
   .p-test{background:rgba(45,212,196,0.1);color:var(--teal)}
+
+  /* INSIGHT GRID */
   .insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-  @media(max-width:900px){.insight-grid{grid-template-columns:1fr 1fr}}
   .insight-box{background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border);border-left:3px solid}
-  .insight-box.gold{border-left-color:var(--gold)}
-  .insight-box.teal{border-left-color:var(--teal)}
-  .insight-box.red{border-left-color:var(--red)}
+  .insight-box.gold{border-left-color:var(--gold)} .insight-box.teal{border-left-color:var(--teal)}
+  .insight-box.red{border-left-color:var(--red)} .insight-box.blue{border-left-color:var(--blue)}
   .insight-icon{font-size:18px;margin-bottom:8px}
   .insight-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
   .insight-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+  /* APPENDIX */
   .appendix-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
   .app-table{width:100%;border-collapse:collapse;font-size:12px}
   .app-table thead th{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 14px;text-align:right;background:var(--surface);font-weight:500;white-space:nowrap}
@@ -214,15 +218,18 @@
   .adset-table td:first-child{text-align:left;padding-left:36px}
   .adset-table tr:last-child td{border-bottom:none}
 
-  /* ERROR */
+  /* SECTION DIVIDER */
+  .section-divider{display:flex;align-items:center;gap:10px;margin:20px 0 16px}
+  .section-divider-line{flex:1;height:1px;background:var(--border)}
+  .section-divider-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;white-space:nowrap}
+
+  /* ERROR / EMPTY */
   .error-banner{background:var(--red-dim);border:1px solid rgba(245,96,96,0.3);color:var(--red);padding:14px 20px;border-radius:8px;margin-bottom:24px;font-size:13px;display:flex;align-items:center;gap:10px}
-
-  /* FOOTER */
-  .footer{border-top:1px solid var(--border);padding:24px 60px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
-
-  /* EMPTY */
   .empty-state{padding:60px;text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px}
   .empty-icon{font-size:36px;margin-bottom:12px;opacity:0.5}
+
+  /* FOOTER */
+  .footer{border-top:1px solid var(--border);padding:20px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
 
   /* FLATPICKR DARK */
   .flatpickr-calendar{background:var(--surface2)!important;border:1px solid rgba(201,162,39,0.3)!important;border-radius:10px!important;box-shadow:0 20px 60px rgba(0,0,0,0.6)!important}
@@ -237,14 +244,38 @@
 
   /* RESPONSIVE */
   @media(max-width:1100px){
-    .header,.nav,.main,.footer{padding-left:24px;padding-right:24px}
+    .header,.nav,.main,.footer{padding-left:28px;padding-right:28px}
     .kpi-grid{grid-template-columns:repeat(3,1fr)}
     .two-col{grid-template-columns:1fr}
+    .targeting-grid{grid-template-columns:1fr}
+    .insight-grid{grid-template-columns:1fr 1fr}
+    .per-platform-grid{grid-template-columns:1fr !important}
   }
-  @media(max-width:700px){
+  @media(max-width:768px){
+    .header,.nav,.main,.footer{padding-left:16px;padding-right:16px}
+    h1{font-size:20px}
+    .header{padding-top:20px;padding-bottom:16px}
+    .header-top{flex-direction:column;gap:16px}
     .kpi-grid{grid-template-columns:1fr 1fr}
-    h1{font-size:22px}
-    .age-row-grid{grid-template-columns:70px 1fr 70px}
+    .two-col{grid-template-columns:1fr}
+    .targeting-grid{grid-template-columns:1fr}
+    .insight-grid{grid-template-columns:1fr}
+    .section-header{flex-wrap:wrap;gap:6px}
+    .section-sub{margin-left:0;width:100%}
+    .combined-strip-inner{grid-template-columns:1fr 1fr !important}
+    .combined-strip-inner>div{border-right:none !important;border-bottom:1px solid var(--border);padding:12px 16px !important}
+    .combined-strip-inner>div:last-child{border-bottom:none}
+    .age-row-grid{grid-template-columns:70px 1fr 70px 90px;gap:8px}
+    .nav a{padding:12px 10px;font-size:10px;letter-spacing:0.5px}
+    .toggle-bar{width:100%}
+    .toggle-btn{flex:1;text-align:center}
+    .date-input-wrap input{min-width:160px}
+  }
+  @media(max-width:480px){
+    .kpi-grid{grid-template-columns:1fr 1fr}
+    .kpi-value{font-size:20px}
+    .combined-strip-inner{grid-template-columns:1fr !important}
+    h1{font-size:17px}
   }
 </style>
 </head>
@@ -288,11 +319,6 @@
       </div>
     </div>
   </div>
-  <div class="accounts-row">
-    <div class="account-tag"><span class="account-dot dot-gold"></span> GT Bharathi Projects · act_522598556166911</div>
-    <div class="account-tag"><span class="account-dot dot-teal"></span> Bharathi Meraki · act_991827431878117</div>
-    <div class="account-tag" style="margin-left:auto">Meta Ads API · 7d click + 1d view attribution</div>
-  </div>
 </div>
 
 <!-- NAV -->
@@ -319,45 +345,133 @@
   <div class="section-header">
     <span class="section-num">01</span>
     <h2 class="section-title">Account Overview</h2>
-    <span class="section-sub">Both accounts · {{ date_start }} – {{ date_end }}</span>
+    <span class="section-sub">Meta + Google Ads · {{ date_start }} – {{ date_end }}</span>
   </div>
-  <div class="kpi-grid">
-    {% macro delta_badge(val, invert=false) %}
-      {% if val is not none %}
-        {% if (val > 0 and not invert) or (val < 0 and invert) %}
-          <span class="kpi-delta up">↑ {{ val|abs }}%</span>
-        {% elif (val < 0 and not invert) or (val > 0 and invert) %}
-          <span class="kpi-delta down">↓ {{ val|abs }}%</span>
-        {% else %}
-          <span class="kpi-delta neutral">→ 0%</span>
-        {% endif %}
+
+  {% macro delta_badge(val, invert=false) %}
+    {% if val is not none %}
+      {% if (val > 0 and not invert) or (val < 0 and invert) %}
+        <span class="kpi-delta up">↑ {{ val|abs }}%</span>
+      {% elif (val < 0 and not invert) or (val > 0 and invert) %}
+        <span class="kpi-delta down">↓ {{ val|abs }}%</span>
+      {% else %}
+        <span class="kpi-delta neutral">→ 0%</span>
       {% endif %}
-    {% endmacro %}
-    <div class="kpi-card gold">
-      <div class="kpi-label">Total Leads</div>
-      <div class="kpi-value gold">{{ kpis.total_leads }}</div>
-      {{ delta_badge(kpi_deltas.leads) }}
+    {% endif %}
+  {% endmacro %}
+
+  <!-- Combined strip -->
+  {% set gads_leads = gads_data.totals.conversions if gads_data else 0 %}
+  {% set gads_spend = gads_data.totals.spend if gads_data else 0 %}
+  {% set gads_clicks = gads_data.totals.clicks if gads_data else 0 %}
+  {% set gads_impr = gads_data.totals.get('impressions', 0) if gads_data else 0 %}
+  {% set combined_leads = kpis.total_leads + gads_leads %}
+  {% set combined_spend = kpis.total_spend + gads_spend %}
+  {% set combined_cpl = (combined_spend / combined_leads)|round(0)|int if combined_leads > 0 else none %}
+  {% set meta_clicks = campaigns | sum(attribute='clicks') %}
+  {% set combined_clicks = meta_clicks + gads_clicks %}
+  {% set combined_impr = kpis.total_impr + gads_impr %}
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 24px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap">Combined</div>
+      <div style="width:1px;height:28px;background:var(--border);flex-shrink:0"></div>
+      <div class="combined-strip-inner" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;flex:1;min-width:0">
+        <div style="padding:0 16px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Total Leads</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold-light)">{{ combined_leads }}</div>
+          {% if kpi_deltas.leads is not none %}<div class="comb-delta up">{{ '↑' if kpi_deltas.leads > 0 else '↓' }} {{ kpi_deltas.leads|abs }}%</div>{% endif %}
+        </div>
+        <div style="padding:0 16px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Total Spend</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff">{{ fmt_inr(combined_spend) }}</div>
+          {% if kpi_deltas.spend is not none %}<div class="comb-delta up">{{ '↑' if kpi_deltas.spend > 0 else '↓' }} {{ kpi_deltas.spend|abs }}%</div>{% endif %}
+        </div>
+        <div style="padding:0 16px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Blended CPL</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--amber)">{% if combined_cpl %}₹{{ combined_cpl }}{% else %}—{% endif %}</div>
+        </div>
+        <div style="padding:0 16px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Total Clicks</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff">{{ fmt_num(combined_clicks) }}</div>
+        </div>
+        <div style="padding:0 16px">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Impressions</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff">{{ fmt_num(combined_impr) }}</div>
+          {% if kpi_deltas.impr is not none %}<div class="comb-delta up">{{ '↑' if kpi_deltas.impr > 0 else '↓' }} {{ kpi_deltas.impr|abs }}%</div>{% endif %}
+        </div>
+      </div>
     </div>
-    <div class="kpi-card teal">
-      <div class="kpi-label">Total Spend</div>
-      <div class="kpi-value">{{ fmt_inr(kpis.total_spend) }}</div>
-      {{ delta_badge(kpi_deltas.spend) }}
+  </div>
+
+  <!-- Per-platform KPI rows -->
+  <div class="per-platform-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Meta -->
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--gold)"></div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace">Meta Ads</div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card gold">
+          <div class="kpi-label">Leads</div>
+          <div class="kpi-value gold">{{ kpis.total_leads }}</div>
+          {{ delta_badge(kpi_deltas.leads) }}
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-label">Spend</div>
+          <div class="kpi-value">{{ fmt_inr(kpis.total_spend) }}</div>
+          {{ delta_badge(kpi_deltas.spend) }}
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">Avg CPL</div>
+          <div class="kpi-value">{% if kpis.avg_cpl %}₹{{ kpis.avg_cpl|int }}{% else %}—{% endif %}</div>
+          {{ delta_badge(kpi_deltas.avg_cpl, invert=true) }}
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-label">Best CPL</div>
+          <div class="kpi-value gold">{% if kpis.best_cpl %}₹{{ kpis.best_cpl|int }}{% else %}—{% endif %}</div>
+          {{ delta_badge(kpi_deltas.best_cpl, invert=true) }}
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">Impressions</div>
+          <div class="kpi-value">{{ fmt_num(kpis.total_impr) }}</div>
+          {{ delta_badge(kpi_deltas.impr) }}
+        </div>
+      </div>
     </div>
-    <div class="kpi-card gold">
-      <div class="kpi-label">Avg. CPL</div>
-      <div class="kpi-value">{% if kpis.avg_cpl %}₹{{ kpis.avg_cpl|int }}{% else %}—{% endif %}</div>
-      {{ delta_badge(kpi_deltas.avg_cpl, invert=true) }}
+    <!-- Google -->
+    {% if gads_data %}
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--blue)"></div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-family:'DM Mono',monospace">Google Ads</div>
+      </div>
+      {% set gt = gads_data.totals %}
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Conversions</div>
+          <div class="kpi-value" style="color:var(--blue)">{{ gt.conversions }}</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Spend</div>
+          <div class="kpi-value">{{ gt.spend_fmt }}</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Avg CPL</div>
+          <div class="kpi-value" style="color:{{ gt.cpl_color }}">{{ gt.cpl_fmt }}</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Clicks</div>
+          <div class="kpi-value">{{ fmt_num(gt.clicks) }}</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">CTR</div>
+          <div class="kpi-value">{{ gt.ctr_fmt }}</div>
+        </div>
+      </div>
     </div>
-    <div class="kpi-card teal">
-      <div class="kpi-label">Best CPL</div>
-      <div class="kpi-value gold">{% if kpis.best_cpl %}₹{{ kpis.best_cpl|int }}{% else %}—{% endif %}</div>
-      {{ delta_badge(kpi_deltas.best_cpl, invert=true) }}
-    </div>
-    <div class="kpi-card gold">
-      <div class="kpi-label">Total Impressions</div>
-      <div class="kpi-value">{{ fmt_num(kpis.total_impr) }}</div>
-      {{ delta_badge(kpi_deltas.impr) }}
-    </div>
+    {% endif %}
   </div>
 </section>
 
@@ -366,14 +480,14 @@
   <div class="section-header">
     <span class="section-num">02</span>
     <h2 class="section-title">All Campaigns</h2>
-    <span class="section-sub">Click any row to drill into Ad Sets & Ads →</span>
+    <span class="section-sub">Meta + Google · Click Meta row to drill into Ad Sets →</span>
   </div>
   {% if campaigns %}
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>#</th><th>Campaign</th><th>Impressions</th><th>Reach</th>
+          <th>#</th><th>Campaign</th><th>Platform</th><th>Impressions</th>
           <th>Clicks</th><th>CTR</th><th>Spend</th><th>Leads</th><th>Leads Δ</th><th>CPL</th><th>CPL Δ</th>
         </tr>
       </thead>
@@ -384,14 +498,13 @@
           <td>
             <div class="camp-name-text">
               {{ c.name[:45] }}
-              <span class="acct-badge {% if c.account_badge=='GT' %}gt-badge{% else %}bm-badge{% endif %}">{{ c.account_badge }}</span>
               {% if c.is_new %}<span class="badge-new">New</span>{% endif %}
               <span class="arrow">→</span>
             </div>
             <div class="camp-sub">{{ c.account_name }}</div>
           </td>
+          <td style="text-align:left"><span class="plt-badge meta-badge">Meta</span></td>
           <td class="mono">{{ c.impr_fmt }}</td>
-          <td class="mono">{{ c.reach_fmt }}</td>
           <td class="mono">{{ c.clicks }}</td>
           <td class="mono">{{ c.ctr_fmt }}</td>
           <td class="mono">{{ c.spend_fmt }}</td>
@@ -401,6 +514,27 @@
           <td class="mono {% if c.wow_cpl_up == true %}pos{% elif c.wow_cpl_up == false %}neg{% else %}neut{% endif %}" style="font-size:12px">{{ c.wow_cpl_delta }}</td>
         </tr>
         {% endfor %}
+        {% if gads_data %}
+        {% for c in gads_data.campaigns %}
+        {% set loop_offset = campaigns|length %}
+        <tr>
+          <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:12px">{{ loop_offset + loop.index }}</td>
+          <td>
+            <div class="camp-name-text">{{ c.name }}</div>
+            <div class="camp-sub">Elements Ads</div>
+          </td>
+          <td style="text-align:left"><span class="plt-badge google-badge">Google</span></td>
+          <td class="mono">{{ fmt_num(c.impressions) }}</td>
+          <td class="mono">{{ fmt_num(c.clicks) }}</td>
+          <td class="mono">{{ c.ctr_fmt }}</td>
+          <td class="mono">{{ c.spend_fmt }}</td>
+          <td style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:{% if c.conversions>=30 %}var(--blue){% else %}var(--text){% endif %}">{{ c.conversions }}</td>
+          <td class="mono neut">—</td>
+          <td class="mono" style="font-weight:600;color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</td>
+          <td class="mono neut">—</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
       </tbody>
     </table>
   </div>
@@ -426,10 +560,10 @@
           <div class="ad-rank">#{{ loop.index }}</div>
           <div>
             <div class="ad-name">{{ c.name[:36] }}</div>
-            <div class="ad-account"><span style="color:{% if c.account_badge=='GT' %}var(--gold){% else %}var(--teal){% endif %}">●</span> {{ c.account_name }}</div>
-            <div class="lead-bar-wrap"><div class="lead-bar {% if c.account_badge=='GT' %}bar-gold{% else %}bar-teal{% endif %}" style="width:{{ (c.leads/max_leads*100)|int }}%"></div></div>
+            <div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ c.account_name }}</div>
+            <div class="lead-bar-wrap"><div class="lead-bar bar-gold" style="width:{{ (c.leads/max_leads*100)|int }}%"></div></div>
           </div>
-          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold);font-size:16px">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
+          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold-light);font-size:16px">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ c.spend_fmt }}</div><div class="ad-metric-label">Spend</div></div>
         </div>
@@ -444,7 +578,7 @@
           <div class="ad-rank worst">#{{ loop.index }}</div>
           <div>
             <div class="ad-name">{{ c.name[:36] }}</div>
-            <div class="ad-account"><span style="color:{% if c.account_badge=='GT' %}var(--gold){% else %}var(--teal){% endif %}">●</span> {{ c.account_name }}</div>
+            <div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ c.account_name }}</div>
           </div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:var(--red)">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
@@ -461,9 +595,9 @@
         {% for c in best_by_cpl %}
         <div class="ad-row">
           <div class="ad-rank">#{{ loop.index }}</div>
-          <div><div class="ad-name">{{ c.name[:36] }}</div><div class="ad-account">{{ c.account_name }}</div></div>
+          <div><div class="ad-name">{{ c.name[:36] }}</div><div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ c.account_name }}</div></div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:var(--green)">{{ c.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
-          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold)">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
+          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold-light)">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ c.spend_fmt }}</div><div class="ad-metric-label">Spend</div></div>
         </div>
         {% else %}<div style="color:var(--muted);font-size:13px;padding:20px 0">No data</div>{% endfor %}
@@ -475,7 +609,7 @@
         {% for c in worst_by_cpl %}
         <div class="ad-row">
           <div class="ad-rank worst">#{{ loop.index }}</div>
-          <div><div class="ad-name">{{ c.name[:36] }}</div><div class="ad-account">{{ c.account_name }}</div></div>
+          <div><div class="ad-name">{{ c.name[:36] }}</div><div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ c.account_name }}</div></div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:var(--red)">{{ c.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ c.leads }}</div><div class="ad-metric-label">Leads</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ c.spend_fmt }}</div><div class="ad-metric-label">Spend</div></div>
@@ -484,6 +618,31 @@
       </div>
     </div>
   </div>
+  {% if gads_data and gads_data.campaigns %}
+  <div style="margin-top:24px">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label" style="color:var(--blue)">● Google Ads — by Conversions</div>
+      <div class="section-divider-line"></div>
+    </div>
+    <div class="ad-list">
+      {% set max_gads = gads_data.campaigns|map(attribute='conversions')|max %}
+      {% for c in gads_data.campaigns|sort(attribute='conversions',reverse=true) %}
+      <div class="ad-row">
+        <div class="ad-rank" style="color:var(--blue)">#{{ loop.index }}</div>
+        <div>
+          <div class="ad-name">{{ c.name }}</div>
+          <div class="ad-account"><span class="plt-badge google-badge">Google</span> Elements Ads</div>
+          <div class="lead-bar-wrap"><div class="lead-bar bar-blue" style="width:{{ (c.conversions/max_gads*100)|int if max_gads > 0 else 0 }}%"></div></div>
+        </div>
+        <div class="ad-metric"><div class="ad-metric-val" style="color:var(--blue)">{{ c.conversions }}</div><div class="ad-metric-label">Conv.</div></div>
+        <div class="ad-metric"><div class="ad-metric-val" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
+        <div class="ad-metric"><div class="ad-metric-val">{{ c.spend_fmt }}</div><div class="ad-metric-label">Spend</div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </section>
 
 <!-- ═══ 04: WEEK-ON-WEEK ═══ -->
@@ -498,7 +657,7 @@
     <table class="wow-table">
       <thead>
         <tr>
-          <th>Campaign</th>
+          <th>Campaign</th><th>Platform</th>
           <th>CW Leads</th><th>PW Leads</th><th>Leads Δ</th>
           <th>CW CPL</th><th>PW CPL</th><th>CPL Δ</th>
           <th>CW Spend</th><th>PW Spend</th>
@@ -509,8 +668,8 @@
         <tr>
           <td>
             <div style="font-size:13px;font-weight:500;color:var(--text)">{{ c.name[:32] }}</div>
-            <div style="margin-top:3px"><span class="acct-badge {% if c.account_badge=='GT' %}gt-badge{% else %}bm-badge{% endif %}">{{ c.account_badge }}</span></div>
           </td>
+          <td style="text-align:left"><span class="plt-badge meta-badge">Meta</span></td>
           <td class="mono" style="color:var(--gold)">{{ c.leads }}</td>
           <td class="mono neut">{{ c.pw_leads if c.pw_leads is not none else '—' }}</td>
           <td class="mono {% if c.wow_leads_up == true %}pos{% elif c.wow_leads_up == false %}neg{% else %}neut{% endif %}">{{ c.wow_leads_delta }}</td>
@@ -521,6 +680,20 @@
           <td class="mono neut">{{ c.pw_spend_fmt }}</td>
         </tr>
         {% endfor %}
+        {% if gads_data %}
+        {% for c in gads_data.campaigns %}
+        <tr>
+          <td><div style="font-size:13px;font-weight:500;color:var(--text)">{{ c.name[:32] }}</div></td>
+          <td style="text-align:left"><span class="plt-badge google-badge">Google</span></td>
+          <td class="mono" style="color:var(--blue)">{{ c.conversions }}</td>
+          <td class="mono neut">—</td><td class="mono neut">—</td>
+          <td class="mono" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</td>
+          <td class="mono neut">—</td><td class="mono neut">—</td>
+          <td class="mono">{{ c.spend_fmt }}</td>
+          <td class="mono neut">—</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
       </tbody>
     </table>
   </div>
@@ -560,70 +733,139 @@
 </section>
 {% endif %}
 
-<!-- ═══ 05: TARGETING ═══ -->
+<!-- ═══ 05: TARGETING ANALYSIS ═══ -->
 <section id="targeting" class="section">
   <div class="section-header">
     <span class="section-num">05</span>
     <h2 class="section-title">Targeting Analysis</h2>
-    <span class="section-sub">Age & gender · Both accounts combined</span>
+    <span class="section-sub">Toggle between Meta & Google</span>
   </div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Age Group Performance</div>
-      {% if age_rows %}
-      <div class="age-grid">
-        <div class="age-row-grid" style="margin-bottom:4px">
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Age</div>
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Leads</div>
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Spend</div>
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Impr.</div>
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">CPL</div>
-        </div>
-        {% for r in age_rows %}
-        <div class="age-row-grid">
-          <div class="age-label">{{ r.segment }}</div>
-          <div>
-            <div class="age-bar-wrap"><div class="age-bar bar-gold" style="width:{{ (r.leads/max_age_leads*100)|int }}%"></div></div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px">{{ r.leads }}</div>
+
+  <div class="toggle-bar">
+    <button class="toggle-btn active meta-active" onclick="switchTargeting('meta',this)">Meta Ads</button>
+    <button class="toggle-btn" onclick="switchTargeting('google',this)">Google Ads</button>
+  </div>
+
+  <!-- META TARGETING -->
+  <div id="targeting-meta">
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Age Group Performance <span class="plt-badge meta-badge">Meta</span></div>
+        {% if age_rows %}
+        <div class="age-grid">
+          <div class="age-row-grid" style="margin-bottom:4px">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Age</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Leads</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Spend</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Impr.</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">CPL</div>
           </div>
-          <div class="age-val">{{ r.spend_fmt }}</div>
-          <div class="age-val">{{ fmt_num(r.impressions) }}</div>
-          <div class="age-cpl" style="color:{{ r.cpl_color }}">{{ r.cpl_fmt }}</div>
+          {% for r in age_rows %}
+          <div class="age-row-grid">
+            <div class="age-label">{{ r.segment }}</div>
+            <div>
+              <div class="age-bar-wrap"><div class="age-bar bar-gold" style="width:{{ (r.leads/max_age_leads*100)|int }}%"></div></div>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">{{ r.leads }}</div>
+            </div>
+            <div class="age-val">{{ r.spend_fmt }}</div>
+            <div class="age-val">{{ fmt_num(r.impressions) }}</div>
+            <div class="age-cpl" style="color:{{ r.cpl_color }}">{{ r.cpl_fmt }}</div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div style="color:var(--muted);font-size:13px;padding:20px 0">Age breakdown not available for this date range.</div>
+        {% endif %}
       </div>
-      {% else %}
-      <div style="color:var(--muted);font-size:13px;padding:20px 0">Age breakdown not available for this date range.</div>
-      {% endif %}
-    </div>
-    <div class="card">
-      <div class="card-title">Gender Split</div>
-      {% if gender_rows %}
-      <div class="gender-pills">
-        {% for g in gender_rows %}
-        <div class="gender-pill">
-          <div class="gender-pct">{{ g.pct }}%</div>
-          <div class="gender-label">{{ g.segment }}</div>
-          <div class="gender-sub">{{ g.leads }} leads</div>
-          <div class="gender-sub" style="color:{{ g.cpl_color }}">CPL {{ g.cpl_fmt }}</div>
-          <div class="gender-sub">{{ g.spend_fmt }}</div>
+      <div class="card">
+        <div class="card-title">Gender Split <span class="plt-badge meta-badge">Meta</span></div>
+        {% if gender_rows %}
+        <div class="gender-pills">
+          {% for g in gender_rows %}
+          <div class="gender-pill">
+            <div class="gender-pct">{{ g.pct }}%</div>
+            <div class="gender-label">{{ g.segment }}</div>
+            <div class="gender-sub">{{ g.leads }} leads</div>
+            <div class="gender-sub" style="color:{{ g.cpl_color }}">CPL {{ g.cpl_fmt }}</div>
+            <div class="gender-sub">{{ g.spend_fmt }}</div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
+        <div class="chart-wrap" style="height:200px"><canvas id="genderChart"></canvas></div>
+        {% else %}
+        <div style="color:var(--muted);font-size:13px;padding:20px 0">Gender breakdown not available for this date range.</div>
+        {% endif %}
       </div>
-      <div class="chart-wrap" style="height:200px"><canvas id="genderChart"></canvas></div>
-      {% else %}
-      <div style="color:var(--muted);font-size:13px;padding:20px 0">Gender breakdown not available for this date range.</div>
-      {% endif %}
     </div>
+  </div>
+
+  <!-- GOOGLE TARGETING -->
+  <div id="targeting-google" style="display:none">
+    {% if gads_data %}
+    <div class="two-col" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title">Campaign Type Performance <span class="plt-badge google-badge">Google</span></div>
+        <div class="age-grid">
+          <div class="age-row-grid" style="margin-bottom:4px">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Type</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Conv.</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Spend</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">Clicks</div>
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:right">CPL</div>
+          </div>
+          {% set gads_max_conv = gads_data.campaigns|map(attribute='conversions')|max if gads_data.campaigns else 1 %}
+          {% for c in gads_data.campaigns %}
+          <div class="age-row-grid">
+            <div class="age-label">{{ c.name[:10] }}</div>
+            <div>
+              <div class="age-bar-wrap"><div class="age-bar bar-blue" style="width:{{ (c.conversions/gads_max_conv*100)|int if gads_max_conv > 0 else 0 }}%"></div></div>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">{{ c.conversions }}</div>
+            </div>
+            <div class="age-val">{{ c.spend_fmt }}</div>
+            <div class="age-val">{{ fmt_num(c.clicks) }}</div>
+            <div class="age-cpl" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Overall Performance <span class="plt-badge google-badge">Google</span></div>
+        {% set gt = gads_data.totals %}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+          <div style="background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Total Conversions</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--blue)">{{ gt.conversions }}</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Avg CPL</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:{{ gt.cpl_color }}">{{ gt.cpl_fmt }}</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Total Spend</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff">{{ gt.spend_fmt }}</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">CTR</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff">{{ gt.ctr_fmt }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center">
+      <div style="font-size:28px;margin-bottom:12px">📊</div>
+      <div style="font-size:14px;color:var(--muted)">Google Ads data not loaded — set <code style="color:var(--gold)">ANTHROPIC_API_KEY</code> and <code style="color:var(--gold)">GOOGLE_ADS_MCP_URL</code> in Railway.</div>
+    </div>
+    {% endif %}
   </div>
 </section>
 
-<!-- ═══ 05b: TARGETING ANALYSIS & RECOMMENDATIONS ═══ -->
+<!-- ═══ 05b: TARGETING RECOMMENDATIONS ═══ -->
 <section id="targeting-reco" class="section">
   <div class="section-header">
     <span class="section-num">05b</span>
-    <h2 class="section-title">Targeting Analysis & Recommendations</h2>
-    <span class="section-sub">Senior living context · Per-campaign audit · Data sourced from Meta Ads API targeting specs</span>
+    <h2 class="section-title">Targeting Recommendations</h2>
+    <span class="section-sub">Meta + Google · Per-campaign audit</span>
   </div>
 
   <div class="insight-grid" style="margin-bottom:28px">
@@ -632,20 +874,25 @@
       <div class="insight-title">Who Buys Senior Living?</div>
       <div class="insight-desc">Two buyer segments: <strong>Self-buyers</strong> (55–70, retiring professionals) and <strong>Children buyers</strong> (40–55, buying for aging parents). Both need separate targeting approaches.</div>
     </div>
-    <div class="insight-box teal">
-      <div class="insight-icon">💼</div>
-      <div class="insight-title">Highest-Converting Profiles</div>
-      <div class="insight-desc">IT veterans (TCS/Infosys retirees), PSU/govt pensioners (Railways, Defence), doctors, and business owners aged 50–65 with high net worth and retirement mindset.</div>
+    <div class="insight-box blue">
+      <div class="insight-icon">🔍</div>
+      <div class="insight-title">Google Search Intent</div>
+      <div class="insight-desc">High-intent queries like "senior living Bangalore", "retirement homes Mysore" show CPL ₹320–420. Expand negative keyword lists to filter out rental/PG queries.</div>
     </div>
     <div class="insight-box red">
       <div class="insight-icon">⚠️</div>
-      <div class="insight-title">Open Targeting Risk</div>
-      <div class="insight-desc">Broad targeting works when creative is highly relevant (Kaveri videos). Without strong creative signals, OT wastes budget on 25–40 year olds unready for senior living purchase.</div>
+      <div class="insight-title">Cross-Channel Gap</div>
+      <div class="insight-desc">No remarketing bridge between Google and Meta. Visitors from Google Search should enter a Meta retargeting pool — currently these audiences are siloed.</div>
     </div>
   </div>
 
-  <div class="targeting-grid">
-    <!-- GT: Elements Madhuram Jan -->
+  <!-- Meta reco -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label" style="color:var(--gold)">● Meta Ads Recommendations</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div class="targeting-grid" style="margin-bottom:32px">
     <div class="target-card gt-card">
       <div class="target-header">
         <div>
@@ -660,108 +907,16 @@
         <span class="tspec ok">40km radius · Chennai south</span>
         <span class="tspec ok">IT employers: TCS, Infosys, IBM, Wipro</span>
         <span class="tspec ok">Banks: SBI, HDFC, Canara</span>
-        <span class="tspec ok">Retirement planning interest</span>
-        <span class="tspec ok">Pension, Property interests</span>
         <span class="tspec warn">Age 35 too young</span>
         <span class="tspec warn">Classical music interest (noise)</span>
-        <span class="tspec warn">Engaged Shoppers (irrelevant)</span>
       </div>
       <div class="target-section-label">Recommendations</div>
       <ul class="reco-list">
         <li><span class="reco-icon">🔺</span><span>Raise minimum age to <strong>40</strong> — 35-year-olds are rarely senior living buyers <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">✂️</span><span>Remove Classical music, Engaged Shoppers interests — they add noise without senior-living intent <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">➕</span><span>Add "Senior citizen" interest + "Yoga / wellness" behaviors <span class="reco-priority p-high">High</span></span></li>
+        <li><span class="reco-icon">✂️</span><span>Remove Classical music, Engaged Shoppers interests — noise without senior-living intent <span class="reco-priority p-high">High</span></span></li>
         <li><span class="reco-icon">🧪</span><span>Split test: 40–55 (children buyer) vs 55–65 (self-buyer) with different creatives <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">🔁</span><span>Add retargeting layer for website/form visitors — warm leads at lower CPL <span class="reco-priority p-test">Test</span></span></li>
       </ul>
     </div>
-
-    <!-- GT: Elements Uptown Feb -->
-    <div class="target-card gt-card">
-      <div class="target-header">
-        <div>
-          <div style="font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">GT Bharathi Projects</div>
-          <div class="target-name">Elements Uptown Feb</div>
-        </div>
-        <span class="target-cpl-badge cpl-bad">CPL ₹972 🔴 Worst</span>
-      </div>
-      <div class="target-section-label">Current Targeting</div>
-      <div class="target-specs">
-        <span class="tspec ok">Age 35–65</span>
-        <span class="tspec warn">16km radius only — very narrow</span>
-        <span class="tspec warn">Zero interest targeting</span>
-        <span class="tspec warn">Zero behavior signals</span>
-        <span class="tspec warn">Open Targeting — Meta guessing</span>
-        <span class="tspec warn">Gender auto-expand ON</span>
-      </div>
-      <div class="target-section-label">Recommendations</div>
-      <ul class="reco-list">
-        <li><span class="reco-icon">🗺️</span><span>Expand radius to <strong>40–50km</strong> — capture affluent Chennai zones (Anna Nagar, Adyar, OMR, ECR) <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">🎯</span><span>Add interest targeting: retirement planning, property, wealth management, luxury travel <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">🔺</span><span>Raise minimum age to <strong>45</strong> — Uptown is premium; younger buyers less likely <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">🧪</span><span>Duplicate Madhuram Jan's TG targeting into this campaign and compare CPL within 2 weeks <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">🌍</span><span>Add NRI-connected behaviors (Lived abroad, Family of those abroad) <span class="reco-priority p-test">Test</span></span></li>
-      </ul>
-    </div>
-
-    <!-- GT: Brand & Carousel -->
-    <div class="target-card gt-card">
-      <div class="target-header">
-        <div>
-          <div style="font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">GT Bharathi Projects</div>
-          <div class="target-name">Elements Brand &amp; Carousel</div>
-        </div>
-        <span class="target-cpl-badge cpl-bad">CPL ₹894 · 2 ad sets</span>
-      </div>
-      <div class="target-section-label">Current Targeting (2 Ad Sets)</div>
-      <div class="target-specs">
-        <span class="tspec ok">TG set: PSU employers (ONGC, Railways, BPCL, ISRO)</span>
-        <span class="tspec ok">TG set: Indian Defence (Army, Navy, Air Force)</span>
-        <span class="tspec ok">TG set: Doctors, Medical professionals</span>
-        <span class="tspec ok">TG set: 45km radius · Good coverage</span>
-        <span class="tspec warn">OT set: Advantage+ age expansion 25+</span>
-        <span class="tspec warn">OT set: No interest signals</span>
-        <span class="tspec warn">OT set dragging overall CPL to ₹894</span>
-      </div>
-      <div class="target-section-label">Recommendations</div>
-      <ul class="reco-list">
-        <li><span class="reco-icon">⛔</span><span>Pause or restructure the OT ad set — wasting spend on 25–40 age group <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">🔺</span><span>If keeping OT, set minimum age <strong>50</strong> — carousel suits senior self-buyers better <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">💰</span><span>Shift more budget to TG set — PSU/defence targeting is correctly relevant <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">➕</span><span>Add "Central Government Employees" interest to TG set <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">🃏</span><span>Add pricing/offer in each carousel card — ₹X lakhs anchor boosts conversion intent <span class="reco-priority p-test">Test</span></span></li>
-      </ul>
-    </div>
-
-    <!-- BM: Kaveri Mysuru -->
-    <div class="target-card bm-card">
-      <div class="target-header">
-        <div>
-          <div style="font-size:10px;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Bharathi Meraki</div>
-          <div class="target-name">Elements Kaveri Mysuru</div>
-        </div>
-        <span class="target-cpl-badge cpl-good">CPL ₹143 🟢</span>
-      </div>
-      <div class="target-section-label">Current Targeting</div>
-      <div class="target-specs">
-        <span class="tspec ok">Age 35–65</span>
-        <span class="tspec ok">Bangalore + Mysore cities</span>
-        <span class="tspec ok">Broad targeting — working well</span>
-        <span class="tspec">Mix of LEAD_GEN + QUALITY_LEAD goals</span>
-        <span class="tspec warn">No interest layering</span>
-        <span class="tspec warn">Inconsistent optimization goals across ad sets</span>
-      </div>
-      <div class="target-section-label">Recommendations</div>
-      <ul class="reco-list">
-        <li><span class="reco-icon">✅</span><span>Keep current broad structure — don't over-engineer a ₹143 CPL campaign <span class="reco-priority p-high">Preserve</span></span></li>
-        <li><span class="reco-icon">⚙️</span><span>Standardize all ad sets to <strong>QUALITY_LEAD</strong> optimization <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">🧪</span><span>Duplicate one OT ad set → add retirement + property interests as test (keep original live) <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">🗺️</span><span>Expand to Coimbatore + Salem — large retiring IT/govt workforce <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">👨‍👧</span><span>Add "Parents" behavior (50–65 with children) — high overlap with senior living decision-makers <span class="reco-priority p-test">Test</span></span></li>
-      </ul>
-    </div>
-
-    <!-- BM: Kaveri Video Camp -->
     <div class="target-card bm-card">
       <div class="target-header">
         <div>
@@ -776,44 +931,66 @@
         <span class="tspec ok">Bangalore + Mysore cities</span>
         <span class="tspec ok">Broad targeting — Ashwin video drives quality</span>
         <span class="tspec ok">QUALITY_LEAD optimization</span>
-        <span class="tspec warn">No interest signals</span>
         <span class="tspec warn">No geographic expansion beyond Blr/MYS</span>
       </div>
       <div class="target-section-label">Recommendations</div>
       <ul class="reco-list">
-        <li><span class="reco-icon">✅</span><span>Keep current structure intact — video creative + geography combination is working perfectly <span class="reco-priority p-high">Preserve</span></span></li>
-        <li><span class="reco-icon">🗺️</span><span>Test Hyderabad expansion: duplicate winning ad set targeting 40–65 in HITEC City area <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">🗺️</span><span>Test Pune expansion — large Marathi + Kannada-speaking retiree population <span class="reco-priority p-test">Test</span></span></li>
+        <li><span class="reco-icon">✅</span><span>Keep current structure intact — don't over-engineer ₹131 CPL <span class="reco-priority p-high">Preserve</span></span></li>
+        <li><span class="reco-icon">🗺️</span><span>Test Hyderabad expansion: HITEC City, Gachibowli belt <span class="reco-priority p-test">Test</span></span></li>
         <li><span class="reco-icon">💬</span><span>Test WhatsApp CTA alongside lead form — senior buyers prefer direct conversation <span class="reco-priority p-test">Test</span></span></li>
-        <li><span class="reco-icon">👨‍💻</span><span>Layer retired IT professional behaviors on a duplicate to filter higher-intent audience <span class="reco-priority p-test">Test</span></span></li>
       </ul>
     </div>
+  </div>
 
-    <!-- BM: Kucharam -->
-    <div class="target-card bm-card">
+  <!-- Google reco -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label" style="color:var(--blue)">● Google Ads Recommendations</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div class="targeting-grid">
+    <div class="target-card google-card">
       <div class="target-header">
         <div>
-          <div style="font-size:10px;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Bharathi Meraki</div>
-          <div class="target-name">Kucharam Hyderabad Survey</div>
+          <div style="font-size:10px;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Google · Search</div>
+          <div class="target-name">Elements Madhuram – Search</div>
         </div>
-        <span class="target-cpl-badge cpl-bad">CPL ₹678 · Paused</span>
+        <span class="target-cpl-badge cpl-ok">CPL ₹435</span>
       </div>
-      <div class="target-section-label">Current Targeting</div>
+      <div class="target-section-label">Current Setup</div>
       <div class="target-specs">
-        <span class="tspec ok">Age 40–65 ✓ Correct floor</span>
-        <span class="tspec ok">40km radius · Central Hyderabad</span>
-        <span class="tspec warn">Zero interest targeting</span>
-        <span class="tspec warn">Zero behavior signals</span>
-        <span class="tspec warn">LEAD_GENERATION goal (not QUALITY_LEAD)</span>
-        <span class="tspec warn">Not focused on HITEC City / Gachibowli affluent belt</span>
+        <span class="tspec ok">Branded + generic keywords</span>
+        <span class="tspec ok">Chennai + Coimbatore geo</span>
+        <span class="tspec warn">Missing negative keywords</span>
+        <span class="tspec warn">No audience layering</span>
       </div>
       <div class="target-section-label">Recommendations</div>
       <ul class="reco-list">
-        <li><span class="reco-icon">🎯</span><span>Add HYD IT employer targeting: TCS, Infosys, Wipro, Cognizant, Microsoft, Amazon <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">⚙️</span><span>Switch from LEAD_GENERATION to <strong>QUALITY_LEAD</strong> optimization <span class="reco-priority p-urgent">Urgent</span></span></li>
-        <li><span class="reco-icon">🗺️</span><span>Tighten radius to 25–30km focused on HITEC City, Gachibowli, Banjara Hills <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">➕</span><span>Add PSU/defence: BHEL, DRDO, HAL, BEL — large retired PSU workforce in Hyderabad <span class="reco-priority p-high">High</span></span></li>
-        <li><span class="reco-icon">🧪</span><span>Split: 40–55 (children buyers) vs 55–65 (self-buyers) with different copy angles <span class="reco-priority p-test">Test</span></span></li>
+        <li><span class="reco-icon">🚫</span><span>Add negatives: "rent", "PG", "hostel", "cheap", "affordable" <span class="reco-priority p-urgent">Urgent</span></span></li>
+        <li><span class="reco-icon">👥</span><span>Layer in-market audience: "Real Estate" + age 45+ <span class="reco-priority p-high">High</span></span></li>
+        <li><span class="reco-icon">🧪</span><span>Test RLSA — bid higher on Meta website visitors <span class="reco-priority p-test">Test</span></span></li>
+      </ul>
+    </div>
+    <div class="target-card google-card">
+      <div class="target-header">
+        <div>
+          <div style="font-size:10px;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Google · Display</div>
+          <div class="target-name">Elements Kaveri – Display</div>
+        </div>
+        <span class="target-cpl-badge cpl-bad">CPL ₹533+</span>
+      </div>
+      <div class="target-section-label">Current Setup</div>
+      <div class="target-specs">
+        <span class="tspec ok">Managed placements</span>
+        <span class="tspec warn">No frequency cap</span>
+        <span class="tspec warn">Retarget window too broad (540 days)</span>
+        <span class="tspec warn">No audience exclusions</span>
+      </div>
+      <div class="target-section-label">Recommendations</div>
+      <ul class="reco-list">
+        <li><span class="reco-icon">⚙️</span><span>Set frequency cap: 3 impressions/day per user <span class="reco-priority p-urgent">Urgent</span></span></li>
+        <li><span class="reco-icon">🪟</span><span>Narrow retarget window to 30 days — reduce staleness <span class="reco-priority p-high">High</span></span></li>
+        <li><span class="reco-icon">🚫</span><span>Exclude converters and low-quality placement sites <span class="reco-priority p-high">High</span></span></li>
       </ul>
     </div>
   </div>
@@ -836,10 +1013,10 @@
           <div class="ad-rank">#{{ loop.index }}</div>
           <div>
             <div class="ad-name">{{ a.name[:36] }}</div>
-            <div class="ad-account">{{ a.campaign_name[:30] if a.campaign_name else a.account_name }}</div>
-            <div class="lead-bar-wrap"><div class="lead-bar {% if a.account_badge=='GT' %}bar-gold{% else %}bar-teal{% endif %}" style="width:{{ (a.leads/top_max*100)|int }}%"></div></div>
+            <div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ a.campaign_name[:28] if a.campaign_name else a.account_name }}</div>
+            <div class="lead-bar-wrap"><div class="lead-bar bar-gold" style="width:{{ (a.leads/top_max*100)|int }}%"></div></div>
           </div>
-          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold)">{{ a.leads }}</div><div class="ad-metric-label">Leads</div></div>
+          <div class="ad-metric"><div class="ad-metric-val" style="color:var(--gold-light)">{{ a.leads }}</div><div class="ad-metric-label">Leads</div></div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:{{ a.cpl_color }}">{{ a.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ a.ctr_fmt }}</div><div class="ad-metric-label">CTR</div></div>
         </div>
@@ -854,7 +1031,7 @@
           <div class="ad-rank worst">#{{ loop.index }}</div>
           <div>
             <div class="ad-name">{{ a.name[:36] }}</div>
-            <div class="ad-account">{{ a.campaign_name[:30] if a.campaign_name else a.account_name }}</div>
+            <div class="ad-account"><span class="plt-badge meta-badge">Meta</span> {{ a.campaign_name[:28] if a.campaign_name else a.account_name }}</div>
           </div>
           <div class="ad-metric"><div class="ad-metric-val" style="color:var(--red)">{{ a.cpl_fmt }}</div><div class="ad-metric-label">CPL</div></div>
           <div class="ad-metric"><div class="ad-metric-val">{{ a.leads }}</div><div class="ad-metric-label">Leads</div></div>
@@ -883,7 +1060,9 @@
     <span class="section-sub">Click any campaign row to expand its Ad Sets</span>
   </div>
   {% if campaigns %}
-  <div class="appendix-wrap">
+  <!-- META -->
+  <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:10px">● Meta Campaigns</div>
+  <div class="appendix-wrap" style="margin-bottom:24px">
     <table class="app-table">
       <thead>
         <tr>
@@ -899,9 +1078,10 @@
           <td>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span style="font-size:13px;font-weight:500">{{ c.name[:48] }}</span>
-              <span class="acct-badge {% if c.account_badge=='GT' %}gt-badge{% else %}bm-badge{% endif %}">{{ c.account_badge }}</span>
+              <span class="plt-badge meta-badge">Meta</span>
               {% if c.is_new %}<span class="badge-new">New</span>{% endif %}
             </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">{{ c.account_name }}</div>
           </td>
           <td class="mono">{{ c.impr_fmt }}</td>
           <td class="mono">{{ c.reach_fmt }}</td>
@@ -919,9 +1099,7 @@
               <tbody>
                 {% for a in adsets %}
                 <tr>
-                  <td style="border-left:3px solid {% if c.account_badge=='GT' %}var(--gold){% else %}var(--teal){% endif %};background:rgba(0,0,0,0.1)">
-                    {{ a.name[:50] }}
-                  </td>
+                  <td style="border-left:3px solid var(--gold);background:rgba(0,0,0,0.1)">{{ a.name[:50] }}</td>
                   <td class="mono">{{ a.impr_fmt }}</td>
                   <td class="mono">{{ a.reach_fmt }}</td>
                   <td class="mono">{{ a.clicks }}</td>
@@ -942,18 +1120,64 @@
       </tbody>
     </table>
   </div>
+
+  <!-- GOOGLE APPENDIX -->
+  {% if gads_data and gads_data.campaigns %}
+  <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-family:'DM Mono',monospace;margin-bottom:10px">● Google Campaigns</div>
+  <div class="appendix-wrap">
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th style="text-align:center;width:36px"></th>
+          <th style="text-align:left">Campaign</th>
+          <th>Impressions</th><th colspan="2">Clicks</th><th>CTR</th>
+          <th>Spend</th><th>Conv.</th><th>CPL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in gads_data.campaigns %}
+        <tr>
+          <td style="text-align:center;color:var(--blue);font-size:11px">—</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:13px;font-weight:500">{{ c.name }}</span>
+              <span class="plt-badge google-badge">Google</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Elements Ads</div>
+          </td>
+          <td class="mono">{{ fmt_num(c.impressions) }}</td>
+          <td class="mono" colspan="2">{{ fmt_num(c.clicks) }}</td>
+          <td class="mono">{{ c.ctr_fmt }}</td>
+          <td class="mono">{{ c.spend_fmt }}</td>
+          <td style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--blue)">{{ c.conversions }}</td>
+          <td class="mono" style="font-weight:600;color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="background:rgba(66,133,244,0.06);border-top:1px solid rgba(66,133,244,0.2)">
+          <td></td>
+          <td style="font-size:11px;font-weight:600;color:var(--blue);letter-spacing:1px;text-transform:uppercase">Total</td>
+          <td class="mono" style="color:var(--blue)">—</td>
+          <td class="mono" colspan="2" style="color:var(--blue)">{{ fmt_num(gads_data.totals.clicks) }}</td>
+          <td class="mono" style="color:var(--blue)">{{ gads_data.totals.ctr_fmt }}</td>
+          <td class="mono" style="color:var(--blue);font-weight:600">{{ gads_data.totals.spend_fmt }}</td>
+          <td style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--blue)">{{ gads_data.totals.conversions }}</td>
+          <td class="mono" style="font-weight:600;color:{{ gads_data.totals.cpl_color }}">{{ gads_data.totals.cpl_fmt }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
   {% else %}
   <div class="empty-state"><div class="empty-icon">📋</div><div>No data available.</div></div>
   {% endif %}
 </section>
 
-
-
 </div><!-- /main -->
 
 <div class="footer">
-  <div>GT Bharathi Projects (act_522598556166911) · Bharathi Meraki (act_991827431878117)</div>
-  <div>LEAD DATA: action_type="lead" · 7d_click + 1d_view attribution · Meta Ads API v21</div>
+  <div>GT Bharathi Projects (act_522598556166911) · Bharathi Meraki (act_991827431878117) · Elements Ads (5195384554)</div>
+  <div>Meta: action_type="lead" · 7d_click + 1d_view · Google: last-click attribution</div>
 </div>
 
 <script>
@@ -990,7 +1214,7 @@ document.getElementById("date-form").addEventListener("submit", () => {
   document.getElementById("loading-overlay").classList.add("active");
 });
 
-// ─── Campaign navigation ─────────────────────────────────
+// ─── Campaign drill-down navigation ──────────────────────
 function goToCampaign(id, name) {
   const s = document.getElementById("inp-start").value || "{{ date_start }}";
   const e = document.getElementById("inp-end").value   || "{{ date_end }}";
@@ -1018,8 +1242,16 @@ function toggleDrill(idx) {
   }
 }
 
+// ─── Targeting toggle ─────────────────────────────────────
+function switchTargeting(platform, btn){
+  document.querySelectorAll('.toggle-btn').forEach(b=>{b.classList.remove('active','meta-active','google-active')});
+  btn.classList.add('active', platform+'-active');
+  document.getElementById('targeting-meta').style.display   = platform==='meta'   ? '' : 'none';
+  document.getElementById('targeting-google').style.display = platform==='google' ? '' : 'none';
+}
+
 // ─── Charts ──────────────────────────────────────────────
-const gold='#c9a227', teal='#2dd4c4', red='#f56060', green='#4ade80', amber='#fbbf24';
+const gold='#c9a227', teal='#2dd4c4', blue='#4285f4', red='#f56060', green='#4ade80', amber='#fbbf24';
 const muted='rgba(255,255,255,0.35)', gridColor='rgba(255,255,255,0.05)';
 Chart.defaults.color = muted;
 Chart.defaults.font.family = "'DM Mono',monospace";
@@ -1034,9 +1266,8 @@ const legendOpts = {display:true,labels:{color:muted,usePointStyle:true,boxWidth
 {% if campaigns %}
 const camps = {{ campaigns | tojson }};
 const cLabels = camps.map(c => c.name.slice(0,18));
-const cBgs    = camps.map(c => c.account_badge==='GT' ? gold+'cc' : teal+'cc');
 
-// WoW
+// WoW — Meta bars in gold
 const wLabels = {{ wow_names | tojson }};
 const wCwL = {{ wow_cw_leads | tojson }};
 const wPwL = {{ wow_pw_leads | tojson }};
@@ -1080,7 +1311,7 @@ new Chart(document.getElementById('genderChart'),{
 });
 {% endif %}
 
-// Creative charts — grouped CW vs PW
+// Creative charts
 const topAdsData = {{ top_ads | tojson | safe }};
 if (topAdsData && topAdsData.length > 0) {
   const aLabels = topAdsData.map(a => a.name.slice(0,18));
@@ -1102,26 +1333,19 @@ if (topAdsData && topAdsData.length > 0) {
   });
 }
 
-// ─── Active quick-range button highlight ─────────────────
+// Quick-range active highlight
 (function() {
   const ds = "{{ date_start }}";
   const de = "{{ date_end }}";
   const today = new Date("{{ today }}");
   const fmt = d => d.toISOString().slice(0,10);
-
   function rangeFor(days, preset) {
     let start, end = today;
-    if (preset==='week') {
-      const d = today.getDay()||7;
-      start = new Date(today); start.setDate(today.getDate()-d+1);
-    } else if (preset==='month') {
-      start = new Date(today.getFullYear(), today.getMonth(), 1);
-    } else {
-      start = new Date(today); start.setDate(today.getDate()-days+1);
-    }
+    if (preset==='week') { const d = today.getDay()||7; start = new Date(today); start.setDate(today.getDate()-d+1); }
+    else if (preset==='month') { start = new Date(today.getFullYear(), today.getMonth(), 1); }
+    else { start = new Date(today); start.setDate(today.getDate()-days+1); }
     return [fmt(start), fmt(end)];
   }
-
   const presets = [
     {btn: document.querySelectorAll('.qr-btn')[0], range: rangeFor(7)},
     {btn: document.querySelectorAll('.qr-btn')[1], range: rangeFor(14)},
@@ -1132,17 +1356,17 @@ if (topAdsData && topAdsData.length > 0) {
   presets.forEach(({btn, range}) => {
     if (btn && range[0] === ds && range[1] === de) btn.classList.add('active');
   });
-})();// ─── Daily Leads Trend ────────────────────────────────────
+})();
+
+// Daily Leads Trend
 {% if daily_total %}
 const dailyDates  = {{ daily_dates | tojson }};
 const dailyLeads  = {{ daily_total | map(attribute='leads') | list | tojson }};
 const campSeries  = {{ camp_series | tojson | safe }};
-
 const shortDates = dailyDates.map(d => {
   const dt = new Date(d + 'T00:00:00');
   return dt.toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
 });
-
 new Chart(document.getElementById('dailyTotalChart'), {
   type: 'line',
   data: {
@@ -1152,11 +1376,9 @@ new Chart(document.getElementById('dailyTotalChart'), {
       data: dailyLeads,
       borderColor: gold,
       backgroundColor: 'rgba(201,162,39,0.12)',
-      fill: true,
-      tension: 0.4,
+      fill: true, tension: 0.4,
       pointRadius: dailyDates.length <= 14 ? 4 : 2,
-      pointBackgroundColor: gold,
-      borderWidth: 2,
+      pointBackgroundColor: gold, borderWidth: 2,
     }]
   },
   options: {
@@ -1168,7 +1390,6 @@ new Chart(document.getElementById('dailyTotalChart'), {
     }
   }
 });
-
 if (campSeries.length > 0) {
   const campColors = [gold, teal, '#a78bfa', '#f472b6', amber];
   new Chart(document.getElementById('dailyCampChart'), {
@@ -1176,21 +1397,15 @@ if (campSeries.length > 0) {
     data: {
       labels: shortDates,
       datasets: campSeries.map((s, i) => ({
-        label: s.name.slice(0, 22),
-        data: s.data,
+        label: s.name.slice(0, 22), data: s.data,
         borderColor: campColors[i % campColors.length],
-        backgroundColor: 'transparent',
-        tension: 0.4,
-        pointRadius: dailyDates.length <= 14 ? 3 : 1,
-        borderWidth: 2,
+        backgroundColor: 'transparent', tension: 0.4,
+        pointRadius: dailyDates.length <= 14 ? 3 : 1, borderWidth: 2,
       }))
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: 'top', labels: { color: muted, usePointStyle: true, boxWidth: 10 } },
-        tooltip: ttOpts
-      },
+      plugins: { legend: { display: true, position: 'top', labels: { color: muted, usePointStyle: true, boxWidth: 10 } }, tooltip: ttOpts },
       scales: {
         x: { grid: { color: gridColor }, ticks: { color: muted, maxRotation: 45, autoSkip: true, maxTicksLimit: 20 } },
         y: { grid: { color: gridColor }, ticks: { color: muted }, beginAtZero: true }

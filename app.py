@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Flask, render_template, request, jsonify
@@ -27,9 +28,12 @@ app.config["CACHE_DEFAULT_TIMEOUT"]  = 900  # 15 minutes
 cache = Cache(app)
 
 # ─── CONFIG ────────────────────────────────────────────────
-ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN", "").strip()
-APP_ID       = os.environ.get("META_APP_ID", "").strip()
-APP_SECRET   = os.environ.get("META_APP_SECRET", "").strip()
+ACCESS_TOKEN      = os.environ.get("META_ACCESS_TOKEN", "").strip()
+APP_ID            = os.environ.get("META_APP_ID", "").strip()
+APP_SECRET        = os.environ.get("META_APP_SECRET", "").strip()
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+GOOGLE_ADS_MCP_URL= os.environ.get("GOOGLE_ADS_MCP_URL", "").strip()
+GOOGLE_ADS_CID    = "5195384554"  # Elements Ads
 
 ACCOUNTS = {
     "GT Bharathi Projects": {
@@ -426,6 +430,104 @@ def merge_wow(cw_list, pw_list):
     return cw_list
 
 
+# ─── GOOGLE ADS (via Anthropic API + TrueClicks MCP) ───────
+
+def get_google_ads_data(date_start, date_end):
+    """
+    Fetches Google Ads campaign data for Elements Ads (5195384554) by calling
+    the Anthropic API with the TrueClicks MCP server attached.
+    Returns a dict with 'campaigns' list and 'totals' summary, or None on failure.
+    """
+    if not ANTHROPIC_API_KEY or not GOOGLE_ADS_MCP_URL:
+        print("[Google Ads] Skipped — ANTHROPIC_API_KEY or GOOGLE_ADS_MCP_URL not set.")
+        return None
+
+    gaql = (
+        f"SELECT campaign.name, metrics.cost_micros, metrics.conversions, "
+        f"metrics.cost_per_conversion, metrics.clicks, metrics.impressions, metrics.ctr "
+        f"FROM campaign "
+        f"WHERE segments.date BETWEEN '{date_start}' AND '{date_end}' "
+        f"AND metrics.impressions > 0 "
+        f"ORDER BY metrics.conversions DESC"
+    )
+
+    prompt = (
+        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID}.\n\n"
+        f"Run this GAQL query:\n{gaql}\n\n"
+        "Return ONLY a valid JSON object — no markdown, no backticks, no explanation — using this exact structure:\n"
+        '{"campaigns":[{"name":"","spend":0.0,"conversions":0,"cpl":null,"clicks":0,"impressions":0,"ctr":0.0}],'
+        '"totals":{"spend":0.0,"conversions":0,"cpl":null,"clicks":0,"impressions":0,"ctr":0.0}}\n\n'
+        "Rules: divide cost_micros by 1000000 for spend. "
+        "cpl = spend/conversions if conversions > 0 else null. "
+        "ctr should be a percentage value (e.g. 2.5 for 2.5%). "
+        "Include all campaigns returned, even if conversions = 0."
+    )
+
+    try:
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "anthropic-beta": "mcp-client-2025-04-04",
+                "content-type": "application/json",
+            },
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 3000,
+                "mcp_servers": [{"type": "url", "url": GOOGLE_ADS_MCP_URL, "name": "google-ads"}],
+                "messages": [{"role": "user", "content": prompt}],
+            },
+            timeout=45,
+        )
+        if resp.status_code != 200:
+            print(f"[Google Ads MCP] HTTP {resp.status_code}: {resp.text[:300]}")
+            return None
+
+        data = resp.json()
+        text = ""
+        for block in data.get("content", []):
+            if block.get("type") == "text":
+                text += block.get("text", "")
+
+        # Strip any accidental markdown fences
+        text = text.strip()
+        if "```" in text:
+            parts = text.split("```")
+            for part in parts:
+                part = part.strip()
+                if part.startswith("json"):
+                    part = part[4:].strip()
+                if part.startswith("{"):
+                    text = part
+                    break
+
+        parsed = json.loads(text.strip())
+
+        # Enrich campaigns with display helpers
+        for c in parsed.get("campaigns", []):
+            c["spend_fmt"] = fmt_inr(c.get("spend"))
+            cpl = c.get("cpl")
+            c["cpl_fmt"]   = f"₹{int(cpl)}" if cpl else "—"
+            c["cpl_color"] = cpl_color(cpl)
+            ctr = c.get("ctr", 0)
+            c["ctr_fmt"]   = f"{ctr:.2f}%"
+
+        # Enrich totals
+        t = parsed.get("totals", {})
+        t["spend_fmt"] = fmt_inr(t.get("spend"))
+        tcpl = t.get("cpl")
+        t["cpl_fmt"]   = f"₹{int(tcpl)}" if tcpl else "—"
+        t["cpl_color"] = cpl_color(tcpl)
+        t["ctr_fmt"]   = f"{t.get('ctr', 0):.2f}%"
+
+        return parsed
+
+    except Exception as e:
+        print(f"[Google Ads MCP] Error: {e}")
+        return None
+
+
 # ─── ROUTES ────────────────────────────────────────────────
 
 @app.route("/")
@@ -486,6 +588,9 @@ def index():
     def fetch_daily():
         return get_daily_leads(date_start, date_end)
 
+    def fetch_google_ads():
+        return get_google_ads_data(date_start, date_end)
+
     tasks = {
         "campaigns":      fetch_campaigns,
         "prev_campaigns": fetch_prev_campaigns,
@@ -494,10 +599,11 @@ def index():
         "ads":            fetch_ads,
         "adsets":         fetch_adsets,
         "daily":          fetch_daily,
+        "google_ads":     fetch_google_ads,
     }
 
     results = {}
-    with ThreadPoolExecutor(max_workers=7) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         future_map = {executor.submit(fn): name for name, fn in tasks.items()}
         for future in as_completed(future_map):
             name = future_map[future]
@@ -519,6 +625,8 @@ def index():
         daily_total, camp_series, daily_dates = daily_result
     else:
         daily_total, camp_series, daily_dates = [], [], []
+
+    gads_data = results.get("google_ads") or None
 
     # ── Merge WoW (depends on both campaign fetches) ──────────
     try:
@@ -688,6 +796,8 @@ def index():
         daily_dates=daily_dates,
         daily_total=daily_total,
         camp_series=camp_series,
+        # Google Ads
+        gads_data=gads_data,
     )
 
 
