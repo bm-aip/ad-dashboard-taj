@@ -11,6 +11,7 @@ from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.ad import Ad
 from facebook_business.exceptions import FacebookRequestError
+from extract_frames_endpoint import frames_bp
 
 # Load .env file if present
 try:
@@ -25,6 +26,7 @@ app = Flask(__name__)
 # Cache API results for 15 minutes — avoids re-hitting Meta on every refresh
 app.config["CACHE_TYPE"]             = "SimpleCache"
 app.config["CACHE_DEFAULT_TIMEOUT"]  = 900  # 15 minutes
+app.register_blueprint(frames_bp)
 cache = Cache(app)
 
 # ─── CONFIG ────────────────────────────────────────────────
