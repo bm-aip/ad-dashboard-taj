@@ -1,15 +1,19 @@
 import os, subprocess, tempfile, base64, json
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 
 frames_bp = Blueprint("frames", __name__)
 
 @frames_bp.route("/extract-frames", methods=["POST", "OPTIONS"])
 def extract_frames():
     if request.method == "OPTIONS":
-        return _cors("", 204)
+        resp = make_response("", 204)
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        return resp
 
     if "video" not in request.files:
-        return _cors(jsonify({"error": "No video file"}), 400)
+        return _cors({"error": "No video file"}, 400)
 
     file = request.files["video"]
     frame_count = int(request.form.get("frames", 8))
@@ -50,11 +54,11 @@ def extract_frames():
                     "timeIndex": i + 1
                 })
 
-    return _cors(jsonify({"frames": frames, "duration": duration}), 200)
+    return _cors({"frames": frames, "duration": duration}, 200)
 
-def _cors(body, status):
-    resp = jsonify(body) if isinstance(body, dict) else body
+def _cors(data, status):
+    resp = make_response(jsonify(data), status)
     resp.headers["Access-Control-Allow-Origin"] = "*"
     resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-    return resp, status
+    return resp
