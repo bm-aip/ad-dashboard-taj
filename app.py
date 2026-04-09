@@ -1220,28 +1220,106 @@ Generate targeting recommendations for the Suncrest luxury villa project based o
 
 @app.route("/debug/google-ads")
 def debug_google_ads():
-    """Test Google Ads MCP connection in isolation."""
+    """Step-by-step Google Ads SSE connection test — results shown inline."""
+    import threading, queue as q_mod, time
+
     date_start = request.args.get("date_start", "2026-04-03")
     date_end   = request.args.get("date_end",   "2026-04-09")
-    html = "<pre style='background:#111;color:#eee;padding:20px;font-family:monospace'>"
-    html += f"<b style='color:#F97316'>Google Ads MCP Debug</b>\n\n"
-    html += f"CID: {GOOGLE_ADS_CID}\n"
-    html += f"Login CID: {GOOGLE_ADS_LOGIN_CID}\n"
-    html += f"MCP URL set: {bool(GOOGLE_ADS_MCP_URL)}\n"
-    html += f"API Key set: {bool(ANTHROPIC_API_KEY)}\n"
-    html += f"Date range: {date_start} → {date_end}\n\n"
-    html += "Running campaign query...\n"
+
+    steps = []
+    ok    = "<b style='color:#4ade80'>✅</b>"
+    fail  = "<b style='color:#f56060'>❌</b>"
+
+    steps.append(f"CID: {GOOGLE_ADS_CID}")
+    steps.append(f"Login CID: {GOOGLE_ADS_LOGIN_CID}")
+    steps.append(f"MCP URL set: {bool(GOOGLE_ADS_MCP_URL)} {'  ' + ok if GOOGLE_ADS_MCP_URL else '  ' + fail}")
+    steps.append(f"API Key set: {bool(ANTHROPIC_API_KEY)}")
+    steps.append(f"Date range: {date_start} → {date_end}")
+    steps.append("")
+
+    if not GOOGLE_ADS_MCP_URL:
+        steps.append(f"{fail} GOOGLE_ADS_MCP_URL not set in Railway Variables")
+        html = "<pre style='background:#111;color:#eee;padding:20px;font-family:monospace'>"
+        html += f"<b style='color:#F97316'>Google Ads Direct SSE Debug</b>\n\n"
+        html += "\n".join(steps)
+        html += f"\n\n<a href='/' style='color:#F97316'>← Back</a></pre>"
+        return html
+
+    # Step 1: Can we reach the MCP URL at all?
+    steps.append("Step 1 — Reaching TrueClicks MCP URL...")
     try:
-        result = get_google_ads_data(date_start, date_end)
-        if result:
-            html += f"<b style='color:#4ade80'>✅ SUCCESS</b>\n"
-            html += f"Campaigns: {len(result.get('campaigns', []))}\n"
-            html += f"Totals: {result.get('totals', {})}\n"
+        probe = requests.get(
+            GOOGLE_ADS_MCP_URL,
+            stream=True,
+            headers={"Accept": "text/event-stream"},
+            timeout=8,
+        )
+        steps.append(f"  HTTP status: {probe.status_code}")
+        if probe.status_code == 200:
+            steps.append(f"  {ok} Connected — reading first SSE event...")
+            endpoint_uri = None
+            for raw in probe.iter_lines():
+                if not raw:
+                    continue
+                line = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+                if line.startswith("data:"):
+                    try:
+                        data = json.loads(line[5:].strip())
+                        if "uri" in data:
+                            endpoint_uri = data["uri"]
+                            break
+                    except Exception:
+                        steps.append(f"  Raw line: {line[:120]}")
+                        break
+                break  # read one line only for probe
+            probe.close()
+
+            if endpoint_uri:
+                steps.append(f"  {ok} Got endpoint URI: {endpoint_uri[:60]}...")
+            else:
+                steps.append(f"  ⚠️  No endpoint URI in first event — will try full query anyway")
         else:
-            html += f"<b style='color:#f56060'>❌ FAILED — returned None (check deploy logs for [MCP] lines)</b>\n"
-    except Exception as e:
-        html += f"<b style='color:#f56060'>❌ EXCEPTION: {e}</b>\n"
-    html += f"\n<a href='/' style='color:#F97316'>← Back to Dashboard</a></pre>"
+            steps.append(f"  {fail} HTTP {probe.status_code}: {probe.text[:200]}")
+    except Exception as exc:
+        steps.append(f"  {fail} Connection error: {exc}")
+
+    steps.append("")
+
+    # Step 2: Run full GAQL query via direct SSE client
+    steps.append("Step 2 — Running campaign GAQL query via direct SSE client...")
+    t0 = time.time()
+    gaql = (
+        f"SELECT campaign.name, metrics.cost_micros, metrics.conversions, "
+        f"metrics.clicks, metrics.impressions FROM campaign "
+        f"WHERE segments.date BETWEEN '{date_start}' AND '{date_end}' "
+        f"AND metrics.impressions > 0 LIMIT 5"
+    )
+    try:
+        rows = call_trueclicks_gaql(
+            GOOGLE_ADS_MCP_URL, int(GOOGLE_ADS_CID), int(GOOGLE_ADS_LOGIN_CID),
+            gaql, timeout=25
+        )
+        elapsed = round(time.time() - t0, 1)
+        if rows is None:
+            steps.append(f"  {fail} Returned None after {elapsed}s")
+            steps.append("  Check Railway deploy logs for [TrueClicks Direct] lines")
+        elif isinstance(rows, list):
+            steps.append(f"  {ok} Got {len(rows)} rows in {elapsed}s")
+            if rows:
+                steps.append(f"  Sample row keys: {list(rows[0].keys()) if isinstance(rows[0], dict) else type(rows[0])}")
+                steps.append(f"  First row: {json.dumps(rows[0])[:200]}")
+        else:
+            steps.append(f"  ⚠️  Unexpected type {type(rows)} — data: {str(rows)[:200]}")
+    except Exception as exc:
+        steps.append(f"  {fail} Exception: {exc}")
+
+    steps.append("")
+    steps.append("<a href='/' style='color:#F97316'>← Back to Dashboard</a>")
+
+    html = "<pre style='background:#111;color:#eee;padding:20px;font-family:monospace;line-height:1.7'>"
+    html += f"<b style='color:#F97316;font-size:15px'>Google Ads Direct SSE Debug</b>\n\n"
+    html += "\n".join(steps)
+    html += "</pre>"
     return html
 
 if __name__ == "__main__":
