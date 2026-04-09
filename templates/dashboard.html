@@ -277,6 +277,53 @@
     .combined-strip-inner{grid-template-columns:1fr !important}
     h1{font-size:17px}
   }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .reco-section { margin-bottom: 28px; }
+  .reco-section-title {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .reco-cross-channel {
+    background: rgba(249,115,22,0.07); border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 28px;
+  }
+  .reco-cross-channel .reco-ch-title {
+    font-size: 13px; font-weight: 600; color: #F97316; margin-bottom: 6px;
+    font-family: var(--font-heading);
+  }
+  .reco-cross-channel .reco-ch-body {
+    font-size: 13px; line-height: 1.6; color: var(--text-secondary);
+    font-family: var(--font-body);
+  }
+  .reco-campaign-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .reco-campaign-card .reco-camp-name {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px; font-family: var(--font-body);
+  }
+  .reco-campaign-card .reco-camp-headline {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 14px; font-family: var(--font-heading);
+  }
+  .reco-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--text-secondary);
+    font-family: var(--font-body); line-height: 1.5; margin-bottom: 10px;
+  }
+  .reco-label {
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+    flex-shrink: 0; margin-top: 2px; font-weight: 700;
+  }
+  .reco-label.urgent { background: rgba(245,96,96,0.15); color: #f56060; }
+  .reco-label.high   { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .reco-label.test   { background: rgba(99,179,237,0.15); color: #63b3ed; }
+  .reco-label.preserve { background: rgba(74,222,128,0.15); color: #4ade80; }
+
 </style>
 </head>
 <body>
@@ -875,14 +922,20 @@
   <div class="section-header">
     <span class="section-num">05b</span>
     <h2 class="section-title">Targeting Recommendations</h2>
-    <p class="section-sub">Meta + Google · Per-campaign audit</p>
+    <p class="section-sub">Meta + Google · AI-powered · Suncrest luxury villas</p>
   </div>
-  <div style="padding:40px;text-align:center;color:var(--text-muted);font-family:var(--font-body)">
-    <div style="font-size:32px;margin-bottom:12px">🎯</div>
-    <div style="font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">AI Recommendations</div>
-    <div style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">
-      Targeting recommendations will appear here once the AI analysis runs.<br>
-      Powered by Claude + live campaign data.
+  <div id="reco-container">
+    <!-- Spinner shown while loading -->
+    <div id="reco-spinner" style="padding:48px;text-align:center;color:var(--text-muted);font-family:var(--font-body)">
+      <div style="display:inline-block;width:36px;height:36px;border:3px solid rgba(249,115,22,0.2);border-top-color:#F97316;border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:16px"></div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Generating AI Recommendations</div>
+      <div style="font-size:12px;margin-top:8px;opacity:0.5">Analysing campaign data · Powered by Claude</div>
+    </div>
+    <!-- Recommendations rendered here by JS -->
+    <div id="reco-content" style="display:none"></div>
+    <!-- Error state -->
+    <div id="reco-error" style="display:none;padding:32px;text-align:center;color:var(--text-muted);font-size:13px">
+      ⚠️ Could not generate recommendations. <a href="#" onclick="loadRecos();return false;" style="color:var(--gold)">Retry</a>
     </div>
   </div>
 </section>
@@ -1325,5 +1378,91 @@ if (campSeries.length > 0) {
 }
 {% endif %}
 </script>
+
+<script>
+function labelClass(l) {
+  const m = {'Urgent':'urgent','High':'high','Test':'test','Preserve':'preserve'};
+  return m[l] || 'high';
+}
+
+function renderRecos(data) {
+  let html = '';
+
+  // Cross-channel insight
+  if (data.cross_channel) {
+    const cc = data.cross_channel;
+    html += `<div class="reco-cross-channel">
+      <div class="reco-ch-title">⚡ ${cc.title}</div>
+      <div class="reco-ch-body">${cc.body}</div>
+    </div>`;
+  }
+
+  // Meta campaigns
+  if (data.meta_campaigns && data.meta_campaigns.length) {
+    html += `<div class="reco-section">
+      <div class="reco-section-title">● Meta Ads Recommendations</div>`;
+    data.meta_campaigns.forEach(camp => {
+      html += `<div class="reco-campaign-card">
+        <div class="reco-camp-name">${camp.campaign}</div>
+        <div class="reco-camp-headline">${camp.headline}</div>`;
+      (camp.recs || []).forEach(r => {
+        html += `<div class="reco-item">
+          <span class="reco-label ${labelClass(r.label)}">${r.label}</span>
+          <span>${r.text}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Google Ads
+  if (data.google_summary && data.google_summary.headline) {
+    html += `<div class="reco-section">
+      <div class="reco-section-title">● Google Ads Recommendations</div>
+      <div class="reco-campaign-card">
+        <div class="reco-camp-headline">${data.google_summary.headline}</div>`;
+    (data.google_summary.recs || []).forEach(r => {
+      html += `<div class="reco-item">
+        <span class="reco-label ${labelClass(r.label)}">${r.label}</span>
+        <span>${r.text}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  return html;
+}
+
+function loadRecos() {
+  const ds = document.getElementById('inp-start') ? document.getElementById('inp-start').value : '{{ date_start }}';
+  const de = document.getElementById('inp-end') ? document.getElementById('inp-end').value : '{{ date_end }}';
+
+  document.getElementById('reco-spinner').style.display = 'block';
+  document.getElementById('reco-content').style.display = 'none';
+  document.getElementById('reco-error').style.display = 'none';
+
+  fetch(`/api/targeting-reco?date_start=${ds}&date_end=${de}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) throw new Error(data.error);
+      document.getElementById('reco-content').innerHTML = renderRecos(data);
+      document.getElementById('reco-spinner').style.display = 'none';
+      document.getElementById('reco-content').style.display = 'block';
+    })
+    .catch(err => {
+      console.error('Reco error:', err);
+      document.getElementById('reco-spinner').style.display = 'none';
+      document.getElementById('reco-error').style.display = 'block';
+    });
+}
+
+// Auto-load on page ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay so main dashboard data loads first
+  setTimeout(loadRecos, 1500);
+});
+</script>
+
 </body>
 </html>

@@ -428,11 +428,22 @@ def merge_wow(cw_list, pw_list):
 
 # ─── GOOGLE ADS (via Anthropic API + TrueClicks MCP) ───────
 
-def _call_mcp(prompt, max_tokens=4000, timeout=50):
+def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
     """Shared helper: call Anthropic API with TrueClicks MCP, return parsed JSON or None."""
-    if not ANTHROPIC_API_KEY or not GOOGLE_ADS_MCP_URL:
+    if not ANTHROPIC_API_KEY:
         return None
     try:
+        payload = {
+            "model": "claude-sonnet-4-20250514",
+            "max_tokens": max_tokens,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        if system_override:
+            payload["system"] = system_override
+        # Only attach MCP server when needed (Google Ads calls)
+        if GOOGLE_ADS_MCP_URL and not system_override:
+            payload["mcp_servers"] = [{"type": "url", "url": GOOGLE_ADS_MCP_URL, "name": "google-ads"}]
+            payload["anthropic-beta"] = "mcp-client-2025-04-04"
         resp = requests.post(
             "https://api.anthropic.com/v1/messages",
             headers={
@@ -441,12 +452,7 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50):
                 "anthropic-beta": "mcp-client-2025-04-04",
                 "content-type": "application/json",
             },
-            json={
-                "model": "claude-sonnet-4-20250514",
-                "max_tokens": max_tokens,
-                "mcp_servers": [{"type": "url", "url": GOOGLE_ADS_MCP_URL, "name": "google-ads"}],
-                "messages": [{"role": "user", "content": prompt}],
-            },
+            json=payload,
             timeout=timeout,
         )
         if resp.status_code != 200:
@@ -976,6 +982,171 @@ def api_campaign(campaign_id):
     ads    = enrich(ads)
     return jsonify({"adsets": adsets, "ads": ads})
 
+
+
+
+@app.route("/api/targeting-reco")
+def api_targeting_reco():
+    """AI-generated targeting recommendations for Suncrest luxury villa/row house project."""
+    date_start = request.args.get("date_start")
+    date_end   = request.args.get("date_end")
+    if not date_start or not date_end:
+        return jsonify({"error": "date_start and date_end required"}), 400
+
+    # Fetch data needed for recommendations
+    try:
+        campaigns  = enrich(get_insights(date_start, date_end, level="campaign"))
+        campaigns.sort(key=lambda x: x["leads"], reverse=True)
+        age_data   = get_breakdown_insights(date_start, date_end, "age")
+        gender_data = get_breakdown_insights(date_start, date_end, "gender")
+        gads_data  = get_google_ads_data(date_start, date_end)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    # Build age summary
+    age_agg = {}
+    for r in age_data:
+        seg = r["segment"]
+        age_agg.setdefault(seg, {"leads": 0, "spend": 0.0})
+        age_agg[seg]["leads"] += r["leads"]
+        age_agg[seg]["spend"] += r["spend"]
+    age_summary = []
+    for seg, v in sorted(age_agg.items()):
+        cpl = round(v["spend"] / v["leads"], 0) if v["leads"] else None
+        age_summary.append({"age": seg, "leads": v["leads"], "cpl": cpl})
+
+    # Build gender summary
+    gender_agg = {}
+    for r in gender_data:
+        seg = r["segment"]
+        gender_agg.setdefault(seg, {"leads": 0, "spend": 0.0})
+        gender_agg[seg]["leads"] += r["leads"]
+        gender_agg[seg]["spend"] += r["spend"]
+    gender_summary = []
+    for seg, v in gender_agg.items():
+        cpl = round(v["spend"] / v["leads"], 0) if v["leads"] else None
+        gender_summary.append({"gender": seg, "leads": v["leads"], "cpl": cpl})
+
+    # Build campaign summary
+    camp_summary = []
+    for c in campaigns:
+        camp_summary.append({
+            "name": c.get("name", ""),
+            "leads": c.get("leads", 0),
+            "spend": c.get("spend", 0),
+            "cpl": c.get("cpl"),
+            "impressions": c.get("impressions", 0),
+            "ctr": c.get("ctr", 0),
+            "wow_leads_delta": c.get("wow_leads_delta", "—"),
+            "wow_cpl_delta": c.get("wow_cpl_delta", "—"),
+        })
+
+    # Build Google Ads summary if available
+    gads_summary = None
+    if gads_data:
+        gads_summary = {
+            "campaigns": [
+                {"name": c.get("name"), "spend": c.get("spend"), "conversions": c.get("conversions"), "cpl": c.get("cpl")}
+                for c in gads_data.get("campaigns", [])
+            ],
+            "totals": gads_data.get("totals", {})
+        }
+
+    # Build prompt for Claude
+    system_prompt = """You are a senior performance marketing strategist specialising in luxury residential real estate in India.
+
+PROJECT CONTEXT — SUNCREST by Navavedam Ventures:
+- Type: Boutique luxury row houses — NOT apartments, NOT a large township
+- Units: Only 40 exclusive homes — the scarcity and boutique nature is a key selling point
+- Configuration: 4 BHK + Study, 3 floors, basement with 2 covered car parks
+- Size: Saleable 3,566–3,590 sq.ft | Carpet 2,679 sq.ft
+- Location: Behind Orion Uptown Mall, Old Madras Road, Bengaluru (Budigere Cross area)
+- Theme: Earthy Scandinavian + biophilic design — natural materials, private backyard, central landscape walkway
+- Clubhouse: 9,117 sq.ft exclusive clubhouse — temperature-controlled indoor pool, yoga studio, fitness centre, BBQ station, study & library, party hall
+- Premium specs: Kohler bathrooms, rain showers, laminated wooden flooring in master bedroom, 8.5ft main door, home lift provision, EV charging provision, solar panel provision
+- Sustainability: Rain water harvesting, sewage treatment plant, hydro-pneumatic water supply
+- Developer: Navavedam Ventures (navavedamventures.com)
+- Tagline: "Experience Soulful Living"
+
+LOCATION ADVANTAGES (Old Madras Road / Budigere Cross):
+- Brigade Signature Towers: 5 min | Bearys Global Research Triangle: 10 min
+- ITPL / EPIP Zone: 35–40 min | Bagmane World Technology Centre: 30 min
+- Kadugodi Metro: 20 min | Airport: 35 min
+- Orion Uptown Mall: 5 min | Taj Vivanta: 25 min
+- New Baldwin International School: 5 min | Vibgyor High: 5 min
+
+BUYER PROFILES:
+- Primary domestic buyer: IT/tech senior professional, aged 35–50, working at nearby tech corridors (Brigade, Bearys, ITPL), family of 4, seeking lifestyle upgrade from apartment to independent home with outdoor space
+- Secondary domestic buyer: Established business owner / entrepreneur in East Bangalore, wants a legacy asset with privacy and nature
+- NRI buyer: Indian diaspora in US or UK, buying for parents living in Bangalore OR as investment asset, attracted by the biophilic design and boutique exclusivity
+- Key emotional triggers: "My kids need a backyard", "Done with apartment living", "Want something I can call mine", "Nature-connected lifestyle", "Only 40 homes — not a crowded township"
+
+AD MESSAGING INTELLIGENCE:
+- "SunCrest Blr Camp" = domestic Bangalore campaign targeting local IT professionals
+- "NRI Campaign" = diaspora targeting in US/UK geographies
+- The ₹914 CPL on SunCrest Blr Camp is strong for a 4 BHK at this price point
+- NRI Campaign at ₹1,630 CPL is acceptable for international diaspora targeting but needs creative optimisation
+
+YOUR TASK:
+Analyse the provided campaign performance data and return ONLY a valid JSON object (no markdown, no backticks, no explanation) with this exact structure:
+
+{
+  "cross_channel": {
+    "title": "string — one insight spanning Meta + Google",
+    "body": "string — 2-3 sentences, specific to the data and SunCrest project",
+    "type": "insight|warning|opportunity"
+  },
+  "meta_campaigns": [
+    {
+      "campaign": "campaign name",
+      "headline": "one-line diagnosis",
+      "recs": [
+        {"label": "Urgent|High|Test|Preserve", "text": "specific actionable recommendation grounded in SunCrest project details"},
+        {"label": "High", "text": "..."},
+        {"label": "Test", "text": "..."}
+      ]
+    }
+  ],
+  "google_summary": {
+    "headline": "one-line Google Ads diagnosis or null if no data",
+    "recs": [
+      {"label": "Urgent|High|Test", "text": "recommendation"}
+    ]
+  }
+}
+
+RULES:
+- Every recommendation must reference actual SunCrest USPs: 40 units exclusivity, private backyard, Earthy Scandinavian theme, Old Madras Road location, biophilic design, clubhouse amenities
+- Reference actual numbers from the data (CPL, spend, leads, age segments, WoW deltas)
+- For SunCrest Blr Camp: target IT professionals near Brigade/Bearys corridor, emphasise backyard + nature + independence from apartments, age 35–48
+- For NRI Campaign: focus on US/UK diaspora, WhatsApp CTA preferred, emphasise boutique community (only 40 homes), investment angle (Old Madras Road appreciation), trust signals
+- CPL benchmarks for this project: ₹800–1,200 acceptable, below ₹800 excellent, ₹1,200–1,800 needs attention, above ₹1,800 urgent
+- Age 25–34 leads are likely pre-qualified curiosity — not the core buyer; flag if budget is heavy here
+- Age 35–54 is the sweet spot for both domestic and NRI buyers
+- If Google data is null, set google_summary.headline to null and google_summary.recs to []
+- Never give generic digital marketing advice — every point must be specific to selling a 4 BHK boutique row house in Bangalore"""
+
+    data_prompt = f"""Date range: {date_start} to {date_end}
+
+META CAMPAIGNS:
+{camp_summary}
+
+AGE BREAKDOWN:
+{age_summary}
+
+GENDER BREAKDOWN:
+{gender_summary}
+
+GOOGLE ADS:
+{gads_summary if gads_summary else "No Google Ads data available for this period."}
+
+Generate targeting recommendations for the Suncrest luxury villa project based on this data."""
+
+    result = _call_mcp(data_prompt, system_override=system_prompt, max_tokens=2000, timeout=55)
+    if not result:
+        return jsonify({"error": "AI analysis failed"}), 500
+
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
