@@ -36,6 +36,7 @@ APP_SECRET        = os.environ.get("META_APP_SECRET", "").strip()
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 GOOGLE_ADS_MCP_URL= os.environ.get("GOOGLE_ADS_MCP_URL", "").strip()
 GOOGLE_ADS_CID    = "9714507656"  # Suncrest
+GOOGLE_ADS_LOGIN_CID = "2214006484"  # MCC that owns Suncrest account
 
 ACCOUNTS = {
     "Suncrest": {
@@ -488,7 +489,7 @@ def get_google_ads_data(date_start, date_end):
         f"ORDER BY metrics.conversions DESC"
     )
     camp_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID}.\n\n"
+        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
         f"Run this GAQL query:\n{camp_gaql}\n\n"
         "Return ONLY a valid JSON object — no markdown, no backticks, no explanation — using this exact structure:\n"
         '{"campaigns":[{"name":"","spend":0.0,"conversions":0,"cpl":null,"clicks":0,"impressions":0,"ctr":0.0}],'
@@ -509,7 +510,7 @@ def get_google_ads_data(date_start, date_end):
         f"ORDER BY metrics.conversions DESC"
     )
     age_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID}.\n\n"
+        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
         f"Run this GAQL query:\n{age_gaql}\n\n"
         "Return ONLY a valid JSON array — no markdown, no backticks, no explanation — using this exact structure:\n"
         '[{"segment":"18-24","conversions":0,"spend":0.0,"impressions":0,"cpl":null}]\n\n'
@@ -529,7 +530,7 @@ def get_google_ads_data(date_start, date_end):
         f"AND campaign.status = 'ENABLED'"
     )
     gender_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID}.\n\n"
+        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
         f"Run this GAQL query:\n{gender_gaql}\n\n"
         "Return ONLY a valid JSON array — no markdown, no backticks, no explanation — using this exact structure:\n"
         '[{"segment":"Male","conversions":0,"spend":0.0,"impressions":0,"cpl":null,"pct":0.0}]\n\n'
