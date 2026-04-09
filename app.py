@@ -456,20 +456,28 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
             timeout=timeout,
         )
         if resp.status_code != 200:
-            print(f"[Google Ads MCP] HTTP {resp.status_code}: {resp.text[:300]}")
+            print(f"[MCP] HTTP {resp.status_code}: {resp.text[:500]}")
             return None
         data = resp.json()
+        # Log stop reason and content block types for debugging
+        stop_reason = data.get("stop_reason", "unknown")
+        block_types = [b.get("type") for b in data.get("content", [])]
+        print(f"[MCP] stop_reason={stop_reason} blocks={block_types}")
         text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+        if not text:
+            # Log full response if no text block found
+            print(f"[MCP] No text block. Full response: {json.dumps(data)[:800]}")
+            return None
         # Strip markdown fences
         if "```" in text:
             for part in text.split("```"):
                 part = part.strip().lstrip("json").strip()
-                if part.startswith("{"):
+                if part.startswith(("{", "[")):
                     text = part
                     break
         return json.loads(text)
     except Exception as e:
-        print(f"[Google Ads MCP] Error: {e}")
+        print(f"[MCP] Error: {e}")
         return None
 
 
@@ -1147,6 +1155,32 @@ Generate targeting recommendations for the Suncrest luxury villa project based o
         return jsonify({"error": "AI analysis failed"}), 500
 
     return jsonify(result)
+
+@app.route("/debug/google-ads")
+def debug_google_ads():
+    """Test Google Ads MCP connection in isolation."""
+    date_start = request.args.get("date_start", "2026-04-03")
+    date_end   = request.args.get("date_end",   "2026-04-09")
+    html = "<pre style='background:#111;color:#eee;padding:20px;font-family:monospace'>"
+    html += f"<b style='color:#F97316'>Google Ads MCP Debug</b>\n\n"
+    html += f"CID: {GOOGLE_ADS_CID}\n"
+    html += f"Login CID: {GOOGLE_ADS_LOGIN_CID}\n"
+    html += f"MCP URL set: {bool(GOOGLE_ADS_MCP_URL)}\n"
+    html += f"API Key set: {bool(ANTHROPIC_API_KEY)}\n"
+    html += f"Date range: {date_start} → {date_end}\n\n"
+    html += "Running campaign query...\n"
+    try:
+        result = get_google_ads_data(date_start, date_end)
+        if result:
+            html += f"<b style='color:#4ade80'>✅ SUCCESS</b>\n"
+            html += f"Campaigns: {len(result.get('campaigns', []))}\n"
+            html += f"Totals: {result.get('totals', {})}\n"
+        else:
+            html += f"<b style='color:#f56060'>❌ FAILED — returned None (check deploy logs for [MCP] lines)</b>\n"
+    except Exception as e:
+        html += f"<b style='color:#f56060'>❌ EXCEPTION: {e}</b>\n"
+    html += f"\n<a href='/' style='color:#F97316'>← Back to Dashboard</a></pre>"
+    return html
 
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
