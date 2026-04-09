@@ -440,8 +440,10 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
         }
         if system_override:
             payload["system"] = system_override
-        # Only attach MCP server when needed (Google Ads calls)
-        if GOOGLE_ADS_MCP_URL and not system_override:
+        # Attach MCP server for Google Ads calls (identified by gads_system prefix)
+        is_gads_call = system_override and "google-ads-download-report" in system_override
+        targeting_reco_call = system_override and "luxury" in system_override
+        if GOOGLE_ADS_MCP_URL and (not system_override or is_gads_call):
             payload["mcp_servers"] = [{"type": "url", "url": GOOGLE_ADS_MCP_URL, "name": "google-ads"}]
             payload["anthropic-beta"] = "mcp-client-2025-04-04"
         resp = requests.post(
@@ -503,8 +505,10 @@ def get_google_ads_data(date_start, date_end):
         f"ORDER BY metrics.conversions DESC"
     )
     camp_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
-        f"Run this GAQL query:\n{camp_gaql}\n\n"
+        f"Call the google-ads-download-report MCP tool with these EXACT parameters:\n"
+        f"- customerId: {GOOGLE_ADS_CID}\n"
+        f"- loginCustomerId: {GOOGLE_ADS_LOGIN_CID}  <-- REQUIRED, must be exactly this value, NOT the same as customerId\n"
+        f"- query: {camp_gaql}\n\n"
         "Return ONLY a valid JSON object — no markdown, no backticks, no explanation — using this exact structure:\n"
         '{"campaigns":[{"name":"","spend":0.0,"conversions":0,"cpl":null,"clicks":0,"impressions":0,"ctr":0.0}],'
         '"totals":{"spend":0.0,"conversions":0,"cpl":null,"clicks":0,"impressions":0,"ctr":0.0}}\n\n'
@@ -524,8 +528,10 @@ def get_google_ads_data(date_start, date_end):
         f"ORDER BY metrics.conversions DESC"
     )
     age_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
-        f"Run this GAQL query:\n{age_gaql}\n\n"
+        f"Call the google-ads-download-report MCP tool with these EXACT parameters:\n"
+        f"- customerId: {GOOGLE_ADS_CID}\n"
+        f"- loginCustomerId: {GOOGLE_ADS_LOGIN_CID}  <-- REQUIRED, must be exactly this value, NOT the same as customerId\n"
+        f"- query: {age_gaql}\n\n"
         "Return ONLY a valid JSON array — no markdown, no backticks, no explanation — using this exact structure:\n"
         '[{"segment":"18-24","conversions":0,"spend":0.0,"impressions":0,"cpl":null}]\n\n'
         "Rules: divide cost_micros by 1000000 for spend. "
@@ -544,8 +550,10 @@ def get_google_ads_data(date_start, date_end):
         f"AND campaign.status = 'ENABLED'"
     )
     gender_prompt = (
-        f"Use the Google Ads MCP tool to download a report for customer ID {GOOGLE_ADS_CID} with loginCustomerId {GOOGLE_ADS_LOGIN_CID}.\n\n"
-        f"Run this GAQL query:\n{gender_gaql}\n\n"
+        f"Call the google-ads-download-report MCP tool with these EXACT parameters:\n"
+        f"- customerId: {GOOGLE_ADS_CID}\n"
+        f"- loginCustomerId: {GOOGLE_ADS_LOGIN_CID}  <-- REQUIRED, must be exactly this value, NOT the same as customerId\n"
+        f"- query: {gender_gaql}\n\n"
         "Return ONLY a valid JSON array — no markdown, no backticks, no explanation — using this exact structure:\n"
         '[{"segment":"Male","conversions":0,"spend":0.0,"impressions":0,"cpl":null,"pct":0.0}]\n\n'
         "Rules: divide cost_micros by 1000000 for spend. "
@@ -554,10 +562,18 @@ def get_google_ads_data(date_start, date_end):
         "pct = conversions / total_conversions * 100 (rounded to 1 decimal). Exclude UNDETERMINED if 0 conversions."
     )
 
+    # System prompt to force correct tool parameter usage
+    gads_system = (
+        f"You are a Google Ads data fetcher. You have access to the google-ads-download-report tool. "
+        f"When called, you MUST use customerId={GOOGLE_ADS_CID} and loginCustomerId={GOOGLE_ADS_LOGIN_CID}. "
+        f"The loginCustomerId is the MCC/manager account and MUST be {GOOGLE_ADS_LOGIN_CID} — never change it. "
+        f"Run the provided GAQL query and return ONLY the JSON response specified. No explanation, no markdown."
+    )
+
     # Fire all three queries
-    camp_data    = _call_mcp(camp_prompt, max_tokens=3000, timeout=50)
-    age_data     = _call_mcp(age_prompt,  max_tokens=2000, timeout=50)
-    gender_data  = _call_mcp(gender_prompt, max_tokens=1500, timeout=45)
+    camp_data    = _call_mcp(camp_prompt, max_tokens=3000, timeout=50, system_override=gads_system)
+    age_data     = _call_mcp(age_prompt,  max_tokens=2000, timeout=50, system_override=gads_system)
+    gender_data  = _call_mcp(gender_prompt, max_tokens=1500, timeout=45, system_override=gads_system)
 
     if not camp_data:
         return None
