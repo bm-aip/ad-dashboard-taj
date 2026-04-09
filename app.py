@@ -35,18 +35,13 @@ APP_ID            = os.environ.get("META_APP_ID", "").strip()
 APP_SECRET        = os.environ.get("META_APP_SECRET", "").strip()
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 GOOGLE_ADS_MCP_URL= os.environ.get("GOOGLE_ADS_MCP_URL", "").strip()
-GOOGLE_ADS_CID    = "5195384554"  # Elements Ads
+GOOGLE_ADS_CID    = "9714507656"  # Suncrest
 
 ACCOUNTS = {
-    "GT Bharathi Projects": {
-        "id": "act_522598556166911",
-        "color": "gold",
-        "badge": "GT",
-    },
-    "Bharathi Meraki": {
-        "id": "act_991827431878117",
-        "color": "teal",
-        "badge": "BM",
+    "Suncrest": {
+        "id": "act_810710292075125",
+        "color": "orange",
+        "badge": "SC",
     },
 }
 
@@ -373,8 +368,6 @@ def get_daily_leads(date_start, date_end):
             insights = account.get_insights(fields=fields, params=params)
             for row in insights:
                 r = dict(row)
-                if not ("elements" in r.get("campaign_name", "").lower()):
-                    continue
                 date  = r.get("date_start", "")
                 leads = extract_leads(r.get("actions", []))
                 camp  = r.get("campaign_name", "Unknown")
@@ -475,7 +468,7 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50):
 
 def get_google_ads_data(date_start, date_end):
     """
-    Fetches Google Ads data for Elements Ads (5195384554):
+    Fetches Google Ads data for Suncrest (9714507656):
       - Campaign metrics (ENABLED campaigns only)
       - Age + gender demographic breakdowns
     Returns a dict with 'campaigns', 'totals', 'age_rows', 'gender_rows', or None on failure.
@@ -639,14 +632,13 @@ def index():
     def fetch_campaigns():
         r = get_insights(date_start, date_end, level="campaign")
         r = enrich(r)
-        r = [c for c in r if "elements" in c["name"].lower()]
         r.sort(key=lambda x: x["leads"], reverse=True)
         return r
 
     def fetch_prev_campaigns():
         r = get_insights(prev_start, prev_end, level="campaign")
         r = enrich(r)
-        return [c for c in r if "elements" in c["name"].lower()]
+        return r
 
     def fetch_age():
         return get_breakdown_insights(date_start, date_end, "age")
@@ -657,14 +649,13 @@ def index():
     def fetch_ads():
         r = get_insights(date_start, date_end, level="ad")
         r = enrich(r)
-        r = [a for a in r if "elements" in a.get("campaign_name", "").lower()]
         r.sort(key=lambda x: x["leads"], reverse=True)
         return r
 
     def fetch_adsets():
         r = get_insights(date_start, date_end, level="adset")
         r = enrich(r)
-        return [a for a in r if "elements" in a.get("campaign_name", "").lower()]
+        return r
 
     def fetch_daily():
         return get_daily_leads(date_start, date_end)
@@ -793,7 +784,6 @@ def index():
     try:
         prev_ads_raw = get_insights(prev_start, prev_end, level="ad")
         prev_ads_raw = enrich(prev_ads_raw)
-        prev_ads_raw = [a for a in prev_ads_raw if "elements" in a.get("campaign_name", "").lower()]
     except Exception:
         pass
     prev_ads_map = {a["name"]: a for a in prev_ads_raw}
@@ -944,16 +934,16 @@ def debug():
         status["api_error"] = str(e)
 
     html = "<pre style='background:#111;color:#eee;padding:30px;font-size:13px;line-height:1.8'>"
-    html += "<b style='color:#c9a227;font-size:16px'>Meta Ads API Debug</b>\n\n"
+    html += "<b style='color:#F97316;font-size:16px'>Meta Ads API Debug</b>\n\n"
     for k, v in status.items():
         if isinstance(v, dict):
-            html += f"<b style='color:#2dd4c4'>{k}</b>\n"
+            html += f"<b style='color:#F97316'>{k}</b>\n"
             for kk, vv in v.items():
                 html += f"  {kk}: {vv}\n"
         else:
             color = "#4ade80" if "✅" in str(v) or v is True else "#f56060" if ("❌" in str(v) or v is False) else "#eee"
             html += f"<span style='color:{color}'>{k}: {v}</span>\n"
-    html += "\n<a href='/' style='color:#c9a227'>← Back to Dashboard</a></pre>"
+    html += "\n<a href='/' style='color:#F97316'>← Back to Dashboard</a></pre>"
     return html
 
 
