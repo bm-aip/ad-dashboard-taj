@@ -1289,7 +1289,8 @@ def debug_google_ads():
 
     # Step 2: Run full GAQL query via direct SSE client
     steps.append("Step 2 — Running campaign GAQL query via direct SSE client...")
-    t0 = time.time()
+    import time as _time
+    t0 = _time.time()
     gaql = (
         f"SELECT campaign.name, metrics.cost_micros, metrics.conversions, "
         f"metrics.clicks, metrics.impressions FROM campaign "
@@ -1301,19 +1302,20 @@ def debug_google_ads():
             GOOGLE_ADS_MCP_URL, int(GOOGLE_ADS_CID), int(GOOGLE_ADS_LOGIN_CID),
             gaql, timeout=25
         )
-        elapsed = round(time.time() - t0, 1)
+        elapsed = round(_time.time() - t0, 1)
         if rows is None:
-            steps.append(f"  {fail} Returned None after {elapsed}s")
-            steps.append("  Check Railway deploy logs for [TrueClicks Direct] lines")
+            steps.append(f"  {fail} Returned None after {elapsed}s — check Railway deploy logs for [TrueClicks] lines")
         elif isinstance(rows, list):
             steps.append(f"  {ok} Got {len(rows)} rows in {elapsed}s")
             if rows:
-                steps.append(f"  Sample row keys: {list(rows[0].keys()) if isinstance(rows[0], dict) else type(rows[0])}")
-                steps.append(f"  First row: {json.dumps(rows[0])[:200]}")
+                first = rows[0]
+                steps.append(f"  Sample keys: {list(first.keys()) if isinstance(first, dict) else type(first)}")
+                steps.append(f"  First row: {json.dumps(first)[:300]}")
         else:
-            steps.append(f"  ⚠️  Unexpected type {type(rows)} — data: {str(rows)[:200]}")
+            steps.append(f"  ⚠️  Unexpected type {type(rows)}: {str(rows)[:300]}")
     except Exception as exc:
-        steps.append(f"  {fail} Exception: {exc}")
+        elapsed = round(_time.time() - t0, 1)
+        steps.append(f"  {fail} Exception after {elapsed}s: {exc}")
 
     steps.append("")
     steps.append("<a href='/' style='color:#F97316'>← Back to Dashboard</a>")
