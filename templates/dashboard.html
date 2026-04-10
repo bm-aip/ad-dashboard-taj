@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suncrest — Performance Campaign Dashboard</title>
+<title>Taj Sky View — Performance Campaign Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -12,8 +12,8 @@
   :root {
     --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c28;
     --border:rgba(255,255,255,0.06);
-    --gold:#F97316; --gold-light:#fb923c; --gold-dim:rgba(249,115,22,0.15);
-    --teal:#F97316; --teal-dim:rgba(249,115,22,0.12);
+    --gold:#c9a227; --gold-light:#d4b23a; --gold-dim:rgba(201,162,39,0.15);
+    --teal:#c9a227; --teal-dim:rgba(201,162,39,0.12);
     --red:#f56060; --red-dim:rgba(245,96,96,0.12);
     --green:#4ade80; --green-dim:rgba(74,222,128,0.12);
     --amber:#fbbf24; --muted:rgba(255,255,255,0.38);
@@ -286,11 +286,11 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   .reco-cross-channel {
-    background: rgba(249,115,22,0.07); border: 1px solid rgba(249,115,22,0.2);
+    background: rgba(201,162,39,0.07); border: 1px solid rgba(201,162,39,0.2);
     border-radius: 10px; padding: 18px 20px; margin-bottom: 28px;
   }
   .reco-cross-channel .reco-ch-title {
-    font-size: 13px; font-weight: 600; color: #F97316; margin-bottom: 6px;
+    font-size: 13px; font-weight: 600; color: #c9a227; margin-bottom: 6px;
     font-family: var(--font-heading);
   }
   .reco-cross-channel .reco-ch-body {
@@ -338,7 +338,7 @@
   <div class="header-top">
     <div>
       <div class="header-badge">Performance Intelligence Report</div>
-      <h1>Suncrest — <span>Performance Campaign Dashboard</span></h1>
+      <h1>Taj Sky View — <span>Performance Campaign Dashboard</span></h1>
     </div>
     <div>
       <div class="date-range-label">Date Range</div>
@@ -568,7 +568,7 @@
           <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:12px">{{ loop_offset + loop.index }}</td>
           <td>
             <div class="camp-name-text">{{ c.name }}</div>
-            <div class="camp-sub">Elements Ads</div>
+            <div class="camp-sub">Taj Sky View</div>
           </td>
           <td style="text-align:left"><span class="plt-badge google-badge">Google</span></td>
           <td class="mono">{{ fmt_num(c.impressions) }}</td>
@@ -607,7 +607,7 @@
   {% endfor %}
   {% if gads_data and gads_data.campaigns %}
     {% for c in gads_data.campaigns %}
-      {% set _ = all_camps.append({'name': c.name, 'account': 'Elements Ads', 'platform': 'Google',
+      {% set _ = all_camps.append({'name': c.name, 'account': 'Taj Sky View', 'platform': 'Google',
          'leads': c.conversions, 'cpl': c.cpl, 'cpl_fmt': c.cpl_fmt, 'cpl_color': c.cpl_color,
          'spend_fmt': c.spend_fmt}) %}
     {% endfor %}
@@ -922,12 +922,12 @@
   <div class="section-header">
     <span class="section-num">05b</span>
     <h2 class="section-title">Targeting Recommendations</h2>
-    <p class="section-sub">Meta + Google · AI-powered · Suncrest luxury villas</p>
+    <p class="section-sub">Meta + Google · AI-powered · Taj Sky View</p>
   </div>
   <div id="reco-container">
     <!-- Spinner shown while loading -->
     <div id="reco-spinner" style="padding:48px;text-align:center;color:var(--text-muted);font-family:var(--font-body)">
-      <div style="display:inline-block;width:36px;height:36px;border:3px solid rgba(249,115,22,0.2);border-top-color:#F97316;border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:16px"></div>
+      <div style="display:inline-block;width:36px;height:36px;border:3px solid rgba(201,162,39,0.2);border-top-color:#c9a227;border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:16px"></div>
       <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Generating AI Recommendations</div>
       <div style="font-size:12px;margin-top:8px;opacity:0.5">Analysing campaign data · Powered by Claude</div>
     </div>
@@ -1087,7 +1087,7 @@
               <span style="font-size:13px;font-weight:500">{{ c.name }}</span>
               <span class="plt-badge google-badge">Google</span>
             </div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">Elements Ads</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">Taj Sky View</div>
           </td>
           <td class="mono">{{ fmt_num(c.impressions) }}</td>
           <td class="mono" colspan="2">{{ fmt_num(c.clicks) }}</td>
@@ -1120,7 +1120,7 @@
 </div><!-- /main -->
 
 <div class="footer">
-  <div>Suncrest (act_810710292075125) · Google Ads (9714507656)</div>
+  <div>Taj Sky View (act_785911403473589) · Google Ads (7478826652)</div>
   <div>Meta: action_type="lead" · 7d_click + 1d_view · Google: last-click attribution</div>
 </div>
 
@@ -1195,7 +1195,7 @@ function switchTargeting(platform, btn){
 }
 
 // ─── Charts ──────────────────────────────────────────────
-const gold='#F97316', teal='#F97316', blue='#4285f4', red='#f56060', green='#4ade80', amber='#fbbf24';
+const gold='#c9a227', teal='#c9a227', blue='#4285f4', red='#f56060', green='#4ade80', amber='#fbbf24';
 const muted='rgba(255,255,255,0.35)', gridColor='rgba(255,255,255,0.05)';
 Chart.defaults.color = muted;
 Chart.defaults.font.family = "'DM Mono',monospace";

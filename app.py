@@ -40,14 +40,14 @@ APP_ID            = os.environ.get("META_APP_ID", "").strip()
 APP_SECRET        = os.environ.get("META_APP_SECRET", "").strip()
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 GOOGLE_ADS_MCP_URL= os.environ.get("GOOGLE_ADS_MCP_URL", "").strip()
-GOOGLE_ADS_CID    = "9714507656"  # Suncrest
-GOOGLE_ADS_LOGIN_CID = "2214006484"  # MCC that owns Suncrest account
+GOOGLE_ADS_CID    = "7478826652"  # Taj Sky View
+GOOGLE_ADS_LOGIN_CID = "2214006484"  # MCC that owns Taj Sky View account
 
 ACCOUNTS = {
-    "Suncrest": {
-        "id": "act_810710292075125",
-        "color": "orange",
-        "badge": "SC",
+    "Taj Sky View": {
+        "id": "act_785911403473589",
+        "color": "gold",
+        "badge": "TS",
     },
 }
 
@@ -483,7 +483,7 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
 
 def get_google_ads_data(date_start, date_end):
     """
-    Fetches Google Ads data for Suncrest (CID 9714507656) via DIRECT TrueClicks SSE connection.
+    Fetches Google Ads data for Taj Sky View (CID 7478826652) via DIRECT TrueClicks SSE connection.
     Bypasses Anthropic API — calls TrueClicks MCP server directly for reliability.
     """
     if not GOOGLE_ADS_MCP_URL:
@@ -1060,7 +1060,7 @@ def api_campaign(campaign_id):
 
 @app.route("/api/targeting-reco")
 def api_targeting_reco():
-    """AI-generated targeting recommendations for Suncrest luxury villa/row house project."""
+    """AI-generated targeting recommendations for Taj Sky View Hotel and Residences."""
     date_start = request.args.get("date_start")
     date_end   = request.args.get("date_end")
     if not date_start or not date_end:
@@ -1126,39 +1126,7 @@ def api_targeting_reco():
         }
 
     # Build prompt for Claude
-    system_prompt = """You are a senior performance marketing strategist specialising in luxury residential real estate in India.
-
-PROJECT CONTEXT — SUNCREST by Navavedam Ventures:
-- Type: Boutique luxury row houses — NOT apartments, NOT a large township
-- Units: Only 40 exclusive homes — the scarcity and boutique nature is a key selling point
-- Configuration: 4 BHK + Study, 3 floors, basement with 2 covered car parks
-- Size: Saleable 3,566–3,590 sq.ft | Carpet 2,679 sq.ft
-- Location: Behind Orion Uptown Mall, Old Madras Road, Bengaluru (Budigere Cross area)
-- Theme: Earthy Scandinavian + biophilic design — natural materials, private backyard, central landscape walkway
-- Clubhouse: 9,117 sq.ft exclusive clubhouse — temperature-controlled indoor pool, yoga studio, fitness centre, BBQ station, study & library, party hall
-- Premium specs: Kohler bathrooms, rain showers, laminated wooden flooring in master bedroom, 8.5ft main door, home lift provision, EV charging provision, solar panel provision
-- Sustainability: Rain water harvesting, sewage treatment plant, hydro-pneumatic water supply
-- Developer: Navavedam Ventures (navavedamventures.com)
-- Tagline: "Experience Soulful Living"
-
-LOCATION ADVANTAGES (Old Madras Road / Budigere Cross):
-- Brigade Signature Towers: 5 min | Bearys Global Research Triangle: 10 min
-- ITPL / EPIP Zone: 35–40 min | Bagmane World Technology Centre: 30 min
-- Kadugodi Metro: 20 min | Airport: 35 min
-- Orion Uptown Mall: 5 min | Taj Vivanta: 25 min
-- New Baldwin International School: 5 min | Vibgyor High: 5 min
-
-BUYER PROFILES:
-- Primary domestic buyer: IT/tech senior professional, aged 35–50, working at nearby tech corridors (Brigade, Bearys, ITPL), family of 4, seeking lifestyle upgrade from apartment to independent home with outdoor space
-- Secondary domestic buyer: Established business owner / entrepreneur in East Bangalore, wants a legacy asset with privacy and nature
-- NRI buyer: Indian diaspora in US or UK, buying for parents living in Bangalore OR as investment asset, attracted by the biophilic design and boutique exclusivity
-- Key emotional triggers: "My kids need a backyard", "Done with apartment living", "Want something I can call mine", "Nature-connected lifestyle", "Only 40 homes — not a crowded township"
-
-AD MESSAGING INTELLIGENCE:
-- "SunCrest Blr Camp" = domestic Bangalore campaign targeting local IT professionals
-- "NRI Campaign" = diaspora targeting in US/UK geographies
-- The ₹914 CPL on SunCrest Blr Camp is strong for a 4 BHK at this price point
-- NRI Campaign at ₹1,630 CPL is acceptable for international diaspora targeting but needs creative optimisation
+    system_prompt = """You are a Meta Ads targeting strategist for Taj Sky View Hotel and Residences, Chennai — the first-ever branded residences by Taj, developed by the Ampa Group. Location: Nelson Manickam Road, Aminjikarai, Chennai CBD (among the tallest hotel + residential towers in the city's CBD). Asset class: ultra-luxury branded condo-hotels and serviced residences — a brand-new category in India. Inventory: 3 BHK apartments (1,555–2,623 sqft RERA carpet) and 4 BHK apartments (2,582–3,699 sqft RERA carpet) across Tower 1 and Tower 2, plus boutique offices. Price segment: ultra-luxury (ticket size ₹8Cr+). USPs: Taj-branded hospitality (dedicated butler, professional housekeeping, global gourmet F&B, highly trained security), half-Olympic podium swimming pool, rooftop waterscape, Taj Spectre theatre, 3,500 sqft club lounge, 6,500 sqft fitness centre, bowling alley, virtual golf simulator, squash/tennis/air-conditioned badminton/futsal/half-basketball courts, 100m high garden, J Wellness Circle, steam & sauna, 11'6"–14'6" ceiling heights, marble-clad toilets, chiller AC, double-glazed heat-reduction windows, HT power, private lift lobby, bed-sized medical evacuation lift. RERA: TN/029 Building/0303/2023. Target audience: (a) NRIs in US, UK, Singapore, UAE, Australia seeking a trophy Indian asset with Taj-branded hospitality; (b) Indian UHNIs and HNIs with ₹5Cr+ investable net worth — senior corporate executives, promoters, business owners, legacy real estate investors, C-suite professionals; (c) Ultra-wealthy Indians looking at branded residences as a new asset class. NRI angle is strong and should be prioritized in geo/interest targeting recommendations. When generating targeting recommendations, lean into luxury-brand affinities (Taj, Oberoi, Ritz-Carlton, private banking, luxury automotive, fine dining, business class travel), high-income job titles, and NRI diaspora geo-targeting.
 
 YOUR TASK:
 Analyse the provided campaign performance data and return ONLY a valid JSON object (no markdown, no backticks, no explanation) with this exact structure:
@@ -1166,7 +1134,7 @@ Analyse the provided campaign performance data and return ONLY a valid JSON obje
 {
   "cross_channel": {
     "title": "string — one insight spanning Meta + Google",
-    "body": "string — 2-3 sentences, specific to the data and SunCrest project",
+    "body": "string — 2-3 sentences, specific to the data and Taj Sky View project",
     "type": "insight|warning|opportunity"
   },
   "meta_campaigns": [
@@ -1174,7 +1142,7 @@ Analyse the provided campaign performance data and return ONLY a valid JSON obje
       "campaign": "campaign name",
       "headline": "one-line diagnosis",
       "recs": [
-        {"label": "Urgent|High|Test|Preserve", "text": "specific actionable recommendation grounded in SunCrest project details"},
+        {"label": "Urgent|High|Test|Preserve", "text": "specific actionable recommendation grounded in Taj Sky View project details"},
         {"label": "High", "text": "..."},
         {"label": "Test", "text": "..."}
       ]
@@ -1189,15 +1157,11 @@ Analyse the provided campaign performance data and return ONLY a valid JSON obje
 }
 
 RULES:
-- Every recommendation must reference actual SunCrest USPs: 40 units exclusivity, private backyard, Earthy Scandinavian theme, Old Madras Road location, biophilic design, clubhouse amenities
+- Every recommendation must reference actual Taj Sky View USPs: Taj-branded hospitality, Chennai CBD location, ultra-luxury amenities, NRI appeal, branded residences as new asset class
 - Reference actual numbers from the data (CPL, spend, leads, age segments, WoW deltas)
-- For SunCrest Blr Camp: target IT professionals near Brigade/Bearys corridor, emphasise backyard + nature + independence from apartments, age 35–48
-- For NRI Campaign: focus on US/UK diaspora, WhatsApp CTA preferred, emphasise boutique community (only 40 homes), investment angle (Old Madras Road appreciation), trust signals
-- CPL benchmarks for this project: ₹800–1,200 acceptable, below ₹800 excellent, ₹1,200–1,800 needs attention, above ₹1,800 urgent
-- Age 25–34 leads are likely pre-qualified curiosity — not the core buyer; flag if budget is heavy here
-- Age 35–54 is the sweet spot for both domestic and NRI buyers
+- Lean into luxury-brand affinities and NRI diaspora geo-targeting
 - If Google data is null, set google_summary.headline to null and google_summary.recs to []
-- Never give generic digital marketing advice — every point must be specific to selling a 4 BHK boutique row house in Bangalore"""
+- Never give generic digital marketing advice — every point must be specific to selling ultra-luxury branded residences in Chennai"""
 
     data_prompt = f"""Date range: {date_start} to {date_end}
 
@@ -1213,7 +1177,7 @@ GENDER BREAKDOWN:
 GOOGLE ADS:
 {gads_summary if gads_summary else "No Google Ads data available for this period."}
 
-Generate targeting recommendations for the Suncrest luxury villa project based on this data."""
+Generate targeting recommendations for the Taj Sky View ultra-luxury branded residences project based on this data."""
 
     result = _call_mcp(data_prompt, system_override=system_prompt, max_tokens=2000, timeout=55)
     if not result:
