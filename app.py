@@ -27,6 +27,10 @@ except ImportError:
 
 app = Flask(__name__)
 
+from analytics import analytics_bp, init_analytics_db
+init_analytics_db()
+app.register_blueprint(analytics_bp)
+
 # ─── CACHE CONFIG ──────────────────────────────────────────
 # Cache API results for 15 minutes — avoids re-hitting Meta on every refresh
 app.config["CACHE_TYPE"]             = "SimpleCache"

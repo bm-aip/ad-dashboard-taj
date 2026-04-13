@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics · {{ dashboard_name }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #14141c;
+      --bg-card-2: #1a1a24;
+      --border: #26263a;
+      --gold: #c9a227;
+      --teal: #2dd4c4;
+      --text: #e8e8ee;
+      --text-muted: #8a8aa0;
+      --green: #4ade80;
+      --amber: #fbbf24;
+      --red: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      padding: 32px 40px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .subtitle strong { color: var(--teal); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .kpi-value.teal { color: var(--teal); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .card h2 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .chart-container { position: relative; height: 280px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left;
+      padding: 10px 8px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--bg-card-2);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+    }
+    td.tab-name { font-family: 'DM Sans', sans-serif; color: var(--teal); }
+    .vid { color: var(--gold); }
+    .muted { color: var(--text-muted); }
+
+    .loading { text-align: center; color: var(--text-muted); padding: 40px; }
+  </style>
+</head>
+<body>
+  <h1>Analytics</h1>
+  <p class="subtitle"><strong>{{ dashboard_name }}</strong> · usage tracking · last 7 days unless noted</p>
+
+  <div id="content" class="loading">Loading…</div>
+
+  <template id="tpl">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">Visitors today</div><div class="kpi-value" data-k="unique_today"></div></div>
+      <div class="kpi"><div class="kpi-label">Visitors 7d</div><div class="kpi-value" data-k="unique_7d"></div></div>
+      <div class="kpi"><div class="kpi-label">Visitors 30d</div><div class="kpi-value" data-k="unique_30d"></div></div>
+      <div class="kpi"><div class="kpi-label">Pageviews 7d</div><div class="kpi-value teal" data-k="pageviews_7d"></div></div>
+      <div class="kpi"><div class="kpi-label">Avg session</div><div class="kpi-value teal" data-k="avg_session"></div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Daily visitors (14d)</h2>
+        <div class="chart-container"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Tab engagement (7d)</h2>
+        <div class="chart-container"><canvas id="tabChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Recent visitors</h2>
+        <table>
+          <thead><tr><th>ID</th><th>Last seen</th><th>Pageviews</th><th>Active time</th><th>Browser</th></tr></thead>
+          <tbody id="recentBody"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Browsers (30d)</h2>
+        <table>
+          <thead><tr><th>Browser</th><th>Sessions</th></tr></thead>
+          <tbody id="browserBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const TOKEN = {{ token | tojson }};
+    const fmtSecs = (s) => {
+      if (!s) return "0s";
+      if (s < 60) return s + "s";
+      if (s < 3600) return Math.floor(s/60) + "m " + (s%60) + "s";
+      return Math.floor(s/3600) + "h " + Math.floor((s%3600)/60) + "m";
+    };
+    const fmtDate = (iso) => new Date(iso + "Z").toLocaleString();
+
+    fetch("/_admin/analytics/data?token=" + encodeURIComponent(TOKEN))
+      .then(r => r.json())
+      .then(render)
+      .catch(err => {
+        document.getElementById("content").innerHTML =
+          '<div class="loading">Error loading analytics: ' + err + '</div>';
+      });
+
+    function render(data) {
+      const tpl = document.getElementById("tpl").content.cloneNode(true);
+      const root = document.getElementById("content");
+      root.classList.remove("loading");
+      root.innerHTML = "";
+      root.appendChild(tpl);
+
+      const s = data.summary;
+      root.querySelector('[data-k="unique_today"]').textContent = s.unique_today;
+      root.querySelector('[data-k="unique_7d"]').textContent = s.unique_7d;
+      root.querySelector('[data-k="unique_30d"]').textContent = s.unique_30d;
+      root.querySelector('[data-k="pageviews_7d"]').textContent = s.pageviews_7d;
+      root.querySelector('[data-k="avg_session"]').textContent = fmtSecs(s.avg_session_seconds);
+
+      // Trend chart
+      new Chart(document.getElementById("trendChart"), {
+        type: "line",
+        data: {
+          labels: data.trend.map(r => r.day.slice(5)),
+          datasets: [
+            { label: "Unique visitors", data: data.trend.map(r => r.visitors),
+              borderColor: "#c9a227", backgroundColor: "rgba(201,162,39,0.15)",
+              fill: true, tension: 0.3 },
+            { label: "Pageviews", data: data.trend.map(r => r.pageviews),
+              borderColor: "#2dd4c4", backgroundColor: "rgba(45,212,196,0.1)",
+              fill: true, tension: 0.3 }
+          ]
+        },
+        options: chartOpts()
+      });
+
+      // Tab chart
+      new Chart(document.getElementById("tabChart"), {
+        type: "bar",
+        data: {
+          labels: data.tabs.map(t => t.tab_name),
+          datasets: [
+            { label: "Views", data: data.tabs.map(t => t.views),
+              backgroundColor: "#c9a227", borderRadius: 4 },
+            { label: "Active seconds", data: data.tabs.map(t => t.seconds || 0),
+              backgroundColor: "#2dd4c4", borderRadius: 4 }
+          ]
+        },
+        options: chartOpts()
+      });
+
+      // Recent table
+      const rb = document.getElementById("recentBody");
+      data.recent.forEach(r => {
+        rb.insertAdjacentHTML("beforeend",
+          '<tr><td class="vid">' + r.visitor_id + '</td>' +
+          '<td>' + fmtDate(r.last_seen) + '</td>' +
+          '<td>' + r.pageviews + '</td>' +
+          '<td>' + fmtSecs(r.active_seconds) + '</td>' +
+          '<td class="muted">' + (r.browser || '—') + '</td></tr>');
+      });
+      if (!data.recent.length) {
+        rb.innerHTML = '<tr><td colspan="5" class="muted">No visitors yet.</td></tr>';
+      }
+
+      // Browser table
+      const bb = document.getElementById("browserBody");
+      data.browsers.forEach(b => {
+        bb.insertAdjacentHTML("beforeend",
+          '<tr><td class="tab-name">' + (b.browser || 'unknown') + '</td>' +
+          '<td>' + b.n + '</td></tr>');
+      });
+      if (!data.browsers.length) {
+        bb.innerHTML = '<tr><td colspan="2" class="muted">No data yet.</td></tr>';
+      }
+    }
+
+    function chartOpts() {
+      return {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: "#8a8aa0", font: { family: "DM Sans" } } } },
+        scales: {
+          x: { ticks: { color: "#8a8aa0" }, grid: { color: "#26263a" } },
+          y: { ticks: { color: "#8a8aa0" }, grid: { color: "#26263a" } }
+        }
+      };
+    }
+  </script>
+</body>
+</html>
