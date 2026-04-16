@@ -101,6 +101,22 @@ AD_INSIGHT_FIELDS = [
 
 def init_api():
     FacebookAdsApi.init(access_token=ACCESS_TOKEN)
+    # Force HTTP timeout on all Meta API calls so a hung SSL read
+    # can't block a gunicorn worker forever. See DASHBOARD_RUNBOOK §1.
+    _api = FacebookAdsApi.get_default_api()
+    _session = _api._session.requests
+    if not getattr(_session, "_bm_timeout_patched", False):
+        import functools
+        _orig_request = _session.request
+
+        @functools.wraps(_orig_request)
+        def _request_with_timeout(*args, **kwargs):
+            # (connect_timeout, read_timeout)
+            kwargs.setdefault("timeout", (10, 45))
+            return _orig_request(*args, **kwargs)
+
+        _session.request = _request_with_timeout
+        _session._bm_timeout_patched = True
 
 
 def extract_leads(actions):
@@ -479,7 +495,12 @@ def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
                 if part.startswith(("{", "[")):
                     text = part
                     break
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError as je:
+            print(f"[MCP] JSON parse failed. First 500 chars of text: {text[:500]!r}")
+            print(f"[MCP] Parse error: {je}")
+            return None
     except Exception as e:
         print(f"[MCP] Error: {e}")
         return None
@@ -527,11 +548,29 @@ def get_google_ads_data(date_start, date_end):
         f"AND campaign.status = 'ENABLED'"
     )
 
-    # Fire queries directly against TrueClicks SSE — no Anthropic intermediary
-    print(f"[Google Ads Direct] Fetching campaigns for {date_start} → {date_end}")
-    camp_rows  = call_trueclicks_gaql(GOOGLE_ADS_MCP_URL, cid, login_cid, camp_gaql,  timeout=30)
-    age_rows_r = call_trueclicks_gaql(GOOGLE_ADS_MCP_URL, cid, login_cid, age_gaql,   timeout=30)
-    gen_rows_r = call_trueclicks_gaql(GOOGLE_ADS_MCP_URL, cid, login_cid, gender_gaql, timeout=30)
+    # Fire all three queries in parallel — was sequential 30+30+30=90s worst case,
+    # now max ~35s. Stays well under gunicorn's 120s request timeout.
+    # See DASHBOARD_RUNBOOK §3.
+    print(f"[Google Ads Direct] Fetching campaigns/age/gender in parallel for {date_start} → {date_end}")
+    with ThreadPoolExecutor(max_workers=3) as gads_pool:
+        f_camp   = gads_pool.submit(call_trueclicks_gaql, GOOGLE_ADS_MCP_URL, cid, login_cid, camp_gaql,   30)
+        f_age    = gads_pool.submit(call_trueclicks_gaql, GOOGLE_ADS_MCP_URL, cid, login_cid, age_gaql,    30)
+        f_gender = gads_pool.submit(call_trueclicks_gaql, GOOGLE_ADS_MCP_URL, cid, login_cid, gender_gaql, 30)
+        try:
+            camp_rows = f_camp.result(timeout=35)
+        except Exception as e:
+            print(f"[Google Ads Direct] camp query failed: {e}")
+            camp_rows = None
+        try:
+            age_rows_r = f_age.result(timeout=35)
+        except Exception as e:
+            print(f"[Google Ads Direct] age query failed: {e}")
+            age_rows_r = None
+        try:
+            gen_rows_r = f_gender.result(timeout=35)
+        except Exception as e:
+            print(f"[Google Ads Direct] gender query failed: {e}")
+            gen_rows_r = None
 
     if not camp_rows:
         print("[Google Ads Direct] Campaign query returned None")
@@ -761,13 +800,19 @@ def index():
     results = {}
     with ThreadPoolExecutor(max_workers=8) as executor:
         future_map = {executor.submit(fn): name for name, fn in tasks.items()}
-        for future in as_completed(future_map):
-            name = future_map[future]
-            try:
-                results[name] = future.result()
-            except Exception as e:
-                errors.append(f"{name.replace('_',' ').title()}: {e}")
-                results[name] = None
+        try:
+            for future in as_completed(future_map, timeout=90):
+                name = future_map[future]
+                try:
+                    results[name] = future.result()
+                except Exception as e:
+                    errors.append(f"{name.replace('_',' ').title()}: {e}")
+                    results[name] = None
+        except TimeoutError:
+            errors.append("Some data sources timed out — showing partial results")
+            for fut, name in future_map.items():
+                if name not in results:
+                    results[name] = None
 
     # Unpack results
     campaigns      = results.get("campaigns")      or []

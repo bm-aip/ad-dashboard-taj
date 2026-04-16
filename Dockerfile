@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 EXPOSE 8080
-CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT --workers 2"]
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --worker-class gthread --timeout 120 --graceful-timeout 30 --access-logfile -"]
