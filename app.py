@@ -451,6 +451,44 @@ def merge_wow(cw_list, pw_list):
     return cw_list
 
 
+def merge_google_wow(gads_data, prev_gads_data):
+    """Attach previous-period metrics to current-period Google campaign rows.
+    Mirrors merge_wow() but for Google's schema (conversions, not leads).
+    If prev_gads_data is None (fetch failed), all PW fields are None → template shows '—'.
+    Safe to call even if gads_data is None — returns as-is.
+    """
+    if not gads_data or not gads_data.get("campaigns"):
+        return gads_data
+
+    prev_campaigns = (prev_gads_data or {}).get("campaigns", []) if prev_gads_data else []
+    pw_map = {c["name"]: c for c in prev_campaigns}
+
+    for c in gads_data["campaigns"]:
+        pw = pw_map.get(c["name"])
+        c["pw_conversions"] = pw["conversions"] if pw else None
+        c["pw_spend"]       = pw["spend"]       if pw else None
+        c["pw_cpl"]         = pw["cpl"]         if pw else None
+        c["pw_cpl_fmt"]     = f"₹{int(pw['cpl'])}" if pw and pw["cpl"] else "—"
+        c["pw_spend_fmt"]   = fmt_inr(pw["spend"]) if pw else "—"
+        if pw and pw["conversions"]:
+            delta = c["conversions"] - pw["conversions"]
+            pct   = round(delta / pw["conversions"] * 100, 1)
+            c["wow_conv_delta"] = f"{'↑' if delta >= 0 else '↓'} {abs(pct)}%"
+            c["wow_conv_up"]    = delta >= 0
+        else:
+            c["wow_conv_delta"] = "—"
+            c["wow_conv_up"]    = None
+        if pw and pw["cpl"] and c["cpl"]:
+            delta = c["cpl"] - pw["cpl"]
+            pct   = round(abs(delta) / pw["cpl"] * 100, 1)
+            c["wow_cpl_delta"] = f"{'↑' if delta >= 0 else '↓'} {abs(pct)}%"
+            c["wow_cpl_up"]    = delta < 0
+        else:
+            c["wow_cpl_delta"] = "—"
+            c["wow_cpl_up"]    = None
+    return gads_data
+
+
 # ─── GOOGLE ADS (via Anthropic API + TrueClicks MCP) ───────
 
 def _call_mcp(prompt, max_tokens=4000, timeout=50, system_override=None):
@@ -786,19 +824,23 @@ def index():
     def fetch_google_ads():
         return get_google_ads_data(date_start, date_end)
 
+    def fetch_prev_google_ads():
+        return get_google_ads_data(prev_start, prev_end)
+
     tasks = {
-        "campaigns":      fetch_campaigns,
-        "prev_campaigns": fetch_prev_campaigns,
-        "age":            fetch_age,
-        "gender":         fetch_gender,
-        "ads":            fetch_ads,
-        "adsets":         fetch_adsets,
-        "daily":          fetch_daily,
-        "google_ads":     fetch_google_ads,
+        "campaigns":         fetch_campaigns,
+        "prev_campaigns":    fetch_prev_campaigns,
+        "age":               fetch_age,
+        "gender":            fetch_gender,
+        "ads":               fetch_ads,
+        "adsets":            fetch_adsets,
+        "daily":             fetch_daily,
+        "google_ads":        fetch_google_ads,
+        "prev_google_ads":   fetch_prev_google_ads,
     }
 
     results = {}
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=9) as executor:
         future_map = {executor.submit(fn): name for name, fn in tasks.items()}
         try:
             for future in as_completed(future_map, timeout=90):
@@ -828,6 +870,9 @@ def index():
         daily_total, camp_series, daily_dates = [], [], []
 
     gads_data = results.get("google_ads") or None
+    prev_gads_data = results.get("prev_google_ads") or None
+    # Attach PW fields to gads_data.campaigns — safe if either is None
+    gads_data = merge_google_wow(gads_data, prev_gads_data)
 
     # ── Merge WoW (depends on both campaign fetches) ──────────
     try:

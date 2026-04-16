@@ -741,11 +741,13 @@
           <td><div style="font-size:13px;font-weight:500;color:var(--text)">{{ c.name[:32] }}</div></td>
           <td style="text-align:left"><span class="plt-badge google-badge">Google</span></td>
           <td class="mono" style="color:var(--blue)">{{ c.conversions }}</td>
-          <td class="mono neut">—</td><td class="mono neut">—</td>
+          <td class="mono neut">{{ c.pw_conversions if c.pw_conversions is not none else '—' }}</td>
+          <td class="mono {% if c.wow_conv_up == true %}pos{% elif c.wow_conv_up == false %}neg{% else %}neut{% endif %}">{{ c.wow_conv_delta }}</td>
           <td class="mono" style="color:{{ c.cpl_color }}">{{ c.cpl_fmt }}</td>
-          <td class="mono neut">—</td><td class="mono neut">—</td>
+          <td class="mono neut">{{ c.pw_cpl_fmt }}</td>
+          <td class="mono {% if c.wow_cpl_up == true %}pos{% elif c.wow_cpl_up == false %}neg{% else %}neut{% endif %}">{{ c.wow_cpl_delta }}</td>
           <td class="mono">{{ c.spend_fmt }}</td>
-          <td class="mono neut">—</td>
+          <td class="mono neut">{{ c.pw_spend_fmt }}</td>
         </tr>
         {% endfor %}
         {% endif %}
