@@ -529,7 +529,7 @@
     <h2 class="section-title">All Campaigns</h2>
     <span class="section-sub">Meta + Google · Click Meta row to drill into Ad Sets →</span>
   </div>
-  {% if campaigns %}
+  {% if campaigns or (gads_data and gads_data.campaigns) %}
   <div class="table-wrap">
     <table>
       <thead>
@@ -707,7 +707,7 @@
     <h2 class="section-title">{{ period_label }} Comparison</h2>
     <span class="section-sub">{{ date_start }}–{{ date_end }} vs {{ prev_start }}–{{ prev_end }}</span>
   </div>
-  {% if campaigns %}
+  {% if campaigns or (gads_data and gads_data.campaigns) %}
   <div class="wow-wrap">
     <table class="wow-table">
       <thead>
@@ -752,6 +752,7 @@
       </tbody>
     </table>
   </div>
+  {% if campaigns %}
   <div class="two-col">
     <div class="card">
       <div class="card-title">Leads — Current vs Previous Period</div>
@@ -762,6 +763,7 @@
       <div class="chart-wrap"><canvas id="wowCplChart"></canvas></div>
     </div>
   </div>
+  {% endif %}
   {% else %}
   <div class="empty-state"><div class="empty-icon">📈</div><div>No WoW data available.</div></div>
   {% endif %}
@@ -945,7 +947,7 @@
   <div class="section-header">
     <span class="section-num">06</span>
     <h2 class="section-title">Creative Analysis</h2>
-    <span class="section-sub">Ad-level performance · {{ date_start }} – {{ date_end }}</span>
+    <span class="section-sub">Meta ad-level performance · {{ date_start }} – {{ date_end }}</span>
   </div>
   <div class="two-col" style="margin-bottom:24px">
     <div class="card">
@@ -1003,6 +1005,7 @@
     <h2 class="section-title">Appendix — Full Campaign Drill-Down</h2>
     <span class="section-sub">Click any campaign row to expand its Ad Sets</span>
   </div>
+  {% if campaigns or (gads_data and gads_data.campaigns) %}
   {% if campaigns %}
   <!-- META -->
   <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:10px">● Meta Campaigns</div>
@@ -1064,6 +1067,7 @@
       </tbody>
     </table>
   </div>
+  {% endif %}
 
   <!-- GOOGLE APPENDIX -->
   {% if gads_data and gads_data.campaigns %}
